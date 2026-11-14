@@ -8,7 +8,7 @@ import { skillGroups } from '../data/skills';
 import { allProjects } from '../lib/projects';
 
 const projects = await allProjects();
-const featured = projects.filter((p) => p.data.featured).slice(0, 3);
+const featured = projects.filter((p) => p.data.featured).slice(0, 4);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -43,7 +43,7 @@ const jsonLd = {
       <h2 id="feat-h">Featured work</h2>
       <a href="/projects/">All 10 projects →</a>
     </div>
-    <div class="grid">
+    <div class="grid feat">
       {featured.map((p) => <ProjectCard project={p} />)}
     </div>
   </section>
@@ -98,4 +98,5 @@ const jsonLd = {
   @media (min-width: 1024px) { .two { grid-template-columns: 3fr 2fr; } }
   .two h2 { margin-top: 0; }
   .more { margin-top: var(--space-4); }
+  @media (min-width: 1024px) { .feat { grid-template-columns: repeat(2, 1fr); } }
 </style>

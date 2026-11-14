@@ -23,17 +23,17 @@ skills:
   - { name: "System test frameworks", level: "production" }
   - { name: "System architecture", level: "built" }
 metrics:
-  - { value: "46", label: "tests I wrote; they found real driver defects" }
+  - { value: "46", label: "tests I wrote; they found real CDD defects" }
   - { value: "90", label: "tests on the framework, team-wide" }
 ---
 
 ## In short
 
-The switch driver has error paths, timeouts and corner cases that never happen on a healthy bench. To test them, I replaced the real switch with a simulated one that answers exactly as each test case says, including wrong answers, late answers and no answer at all.
+The switch CDD has error paths, timeouts and corner cases that never happen on a healthy bench. To test them, I replaced the real switch with a simulated one that answers exactly as each test case says, including wrong answers, late answers and no answer at all.
 
 ## What I did
 
-- **Chose the approach.** I compared testing the driver in isolation with heavy mocking against a system-level test on real Ethernet with a simulated switch. I chose the second for realism, and proved it with a small prototype first.
+- **Chose the approach.** I compared testing the CDD in isolation with heavy mocking against a system-level test on real Ethernet with a simulated switch. I chose the second for realism, and proved it with a small prototype first.
 - **Built the simulated switch** as a node in Vector CANoe, written in CAPL, that returns scripted replies per test case.
 - **Generated the boring parts.** Python generators build the reply dispatcher from a definition file, so adding a case means editing data, not code.
 - **Handled the secure side.** A small C++ library on OpenSSL provides AES key wrap and AES-CMAC, so the simulated switch can take part in the secure protocol.

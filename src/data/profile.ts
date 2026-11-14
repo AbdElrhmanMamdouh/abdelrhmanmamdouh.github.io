@@ -9,7 +9,7 @@ export const profile = {
   location: 'Open to work anywhere',
   positioning: 'Embedded software engineer',
   positioningDetail:
-    'I write embedded C for automotive ECUs, bring up embedded Linux and Android under hypervisors, and build AI tools that write and fix unit tests.',
+    'I bring up Android and embedded Linux under hypervisors on new automotive hardware, write AUTOSAR Classic software for ECUs, and build AI tools that write and fix unit tests.',
   availability: '2+ years in automotive · open to embedded application and embedded Linux roles, anywhere',
   description:
     'Embedded software engineer with 2+ years on automotive OEM and Tier-1 projects: AUTOSAR Classic, embedded Linux and Android bring-up under hypervisors, and multi-agent LLM tools for test engineering.',
@@ -34,7 +34,7 @@ export const profile = {
 // Home-page metric strip: outcomes a recruiter can read in a few seconds.
 export const headlineMetrics = [
   { value: '60%', label: 'less unit-test writing time with AI agents I built' },
-  { value: '2', label: 'hypervisors where I brought up Android Bluetooth' },
+  { value: '2', label: 'hypervisors where I brought up Android 15 and Linux guests' },
   { value: '17–20 FPS', label: 'driver monitoring on an edge chip, up from under 1' },
   { value: 'IEEE', label: 'co-authored paper, MIUCC 2024' },
 ];
@@ -47,9 +47,9 @@ export const experience = [
     org: 'eJad for Engineering Systems',
     current: true,
     items: [
-      { date: '08/2024 – present', title: 'Central ADAS ECU', org: 'German OEM', href: '/projects/adas-ecu-ethernet-switch-driver/' },
+      { date: '08/2024 – present', title: 'Central ADAS ECU', org: 'German OEM', href: '/projects/adas-ecu-ethernet-switch-cdd/' },
       { date: '02/2025 – present', title: 'R&D and AI engineering', org: 'eJad', href: '/projects/ai-test-generation/' },
-      { date: '02/2026 – present', title: 'High-performance cockpit platform', org: 'Tier-1 supplier', href: '/projects/bluetooth-under-hypervisors/' },
+      { date: '02/2026 – present', title: 'High-performance cockpit platform', org: 'Tier-1 supplier', href: '/projects/android-linux-under-hypervisors/' },
       { date: '10/2026 – 11/2026', title: 'Bluetooth / Wi-Fi over Ethernet', org: 'motorcycle OEM', href: '/projects/bluetooth-wifi-over-ethernet/' },
     ],
   },

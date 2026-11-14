@@ -6,7 +6,7 @@ context: "Internal R&D tool · eJad"
 period: "02/2025 – present"
 role: "Started the multi-agent approach; sole author of the 2026 rewrite"
 team: "team tool, three main engineers"
-order: 1
+order: 3
 featured: true
 confidentiality: "internal"
 approval: "pending"

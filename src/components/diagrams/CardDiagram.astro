@@ -10,10 +10,10 @@ const A = `url(#${m}-a)`;
 const AH = `url(#${m}-ah)`;
 
 const titles: Record<string, string> = {
-  'adas-ecu-ethernet-switch-driver': 'AUTOSAR Classic layers, with the switch driver highlighted between the runtime environment and the Ethernet switch',
+  'adas-ecu-ethernet-switch-cdd': 'AUTOSAR Classic layers, with the switch CDD highlighted between the runtime environment and the Ethernet switch',
   'switch-stress-test-framework': 'Test bench: a test PC simulates the switch and talks to the ECU under test, while a diagnostic tester checks the result',
   'switch-frame-pipeline-simulator': 'A frame passing through the stages of an Ethernet switch, with a drop path',
-  'bluetooth-under-hypervisors': 'Three domains on a Xen hypervisor; the UART to the Bluetooth radio is passed through to the Android guest',
+  'android-linux-under-hypervisors': 'A control domain, a Linux driver and cluster domain, and an Android 15 guest on Xen or QNX; UART, USB and camera hardware on the A-sample board are passed through to the guests',
   'bluetooth-wifi-over-ethernet': 'A phone connects by radio to one ECU, which reaches the cluster ECU over Ethernet',
   'ai-test-generation': 'An AI loop that generates tests, builds, runs them and measures coverage, going back to fix failures',
   'sdv-open-platforms': 'Zero-copy publish and subscribe: one shared-memory sample read by several subscribers',
@@ -29,13 +29,13 @@ const label = titles[id] ?? 'Project diagram';
     <marker id={`${m}-ah`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="arrowhead-hl" d="M0,0 L10,5 L0,10 z" /></marker>
   </defs>
 
-  {id === 'adas-ecu-ethernet-switch-driver' && (
+  {id === 'adas-ecu-ethernet-switch-cdd' && (
     <g>
       <rect class="boundary" x="6" y="18" width="300" height="200" rx="4" />
       <text class="boundary-t" x="12" y="12">Microcontroller · AUTOSAR Classic</text>
       <rect class="box" x="20" y="30" width="272" height="34" rx="4" /><text x="156" y="52" text-anchor="middle">Application components</text>
       <rect class="box" x="20" y="72" width="272" height="30" rx="4" /><text x="156" y="92" text-anchor="middle">RTE</text>
-      <rect class="box mine" x="20" y="110" width="272" height="40" rx="4" /><text x="156" y="135" text-anchor="middle" class="mine-t">Switch driver (CDD)</text>
+      <rect class="box mine" x="20" y="110" width="272" height="40" rx="4" /><text x="156" y="135" text-anchor="middle" class="mine-t">Switch CDD</text>
       <rect class="box" x="20" y="158" width="272" height="30" rx="4" /><text x="156" y="178" text-anchor="middle">Ethernet interface</text>
       <line class="path-hl" x1="292" y1="173" x2="326" y2="173" marker-end={AH} />
       <rect class="box" x="330" y="140" width="64" height="66" rx="4" />
@@ -84,23 +84,32 @@ const label = titles[id] ?? 'Project diagram';
     </g>
   )}
 
-  {id === 'bluetooth-under-hypervisors' && (
+  {id === 'android-linux-under-hypervisors' && (
     <g>
-      <rect class="box" x="10" y="20" width="116" height="110" rx="4" />
-      <text x="68" y="64" text-anchor="middle" font-size="12">Control</text><text x="68" y="80" text-anchor="middle" font-size="12">domain</text>
-      <text x="68" y="104" text-anchor="middle" font-size="11" class="muted-t">no drivers</text>
-      <rect class="box" x="142" y="20" width="116" height="110" rx="4" />
-      <text x="200" y="64" text-anchor="middle" font-size="12">Driver</text><text x="200" y="80" text-anchor="middle" font-size="12">domain</text>
-      <text x="200" y="104" text-anchor="middle" font-size="11" class="muted-t">pins, clocks</text>
-      <rect class="box mine" x="274" y="20" width="116" height="110" rx="4" />
-      <text x="332" y="64" text-anchor="middle" font-size="12" class="mine-t">Android 15</text><text x="332" y="80" text-anchor="middle" font-size="12" class="mine-t">guest</text>
-      <text x="332" y="104" text-anchor="middle" font-size="11">Bluetooth</text>
-      <rect class="boundary" x="6" y="140" width="388" height="28" rx="4" />
-      <text x="160" y="159" text-anchor="middle" class="boundary-t" font-size="12">Xen / QNX hypervisor</text>
-      <rect class="box" x="300" y="182" width="90" height="34" rx="4" />
-      <text x="345" y="204" text-anchor="middle" font-size="12">BT radio</text>
-      <line class="path-hl" x1="372" y1="182" x2="372" y2="134" marker-end={AH} />
-      <text x="292" y="204" text-anchor="end" font-size="11" class="mine-t">UART passthrough →</text>
+      <rect class="box" x="10" y="14" width="100" height="92" rx="4" />
+      <text x="60" y="52" text-anchor="middle" font-size="12">Control</text>
+      <text x="60" y="68" text-anchor="middle" font-size="12">domain</text>
+      <text x="60" y="90" text-anchor="middle" font-size="10.5" class="muted-t">no drivers</text>
+      <rect class="box mine" x="122" y="14" width="128" height="92" rx="4" />
+      <text x="186" y="44" text-anchor="middle" font-size="12" class="mine-t">Linux</text>
+      <text x="186" y="62" text-anchor="middle" font-size="10.5">drivers · Yocto</text>
+      <text x="186" y="78" text-anchor="middle" font-size="10.5">Qt cluster</text>
+      <rect class="box mine" x="262" y="14" width="128" height="92" rx="4" />
+      <text x="326" y="44" text-anchor="middle" font-size="12" class="mine-t">Android 15</text>
+      <text x="326" y="62" text-anchor="middle" font-size="10.5">AAOS guest</text>
+      <text x="326" y="78" text-anchor="middle" font-size="10.5">Bluetooth · camera</text>
+      <rect class="boundary" x="6" y="116" width="388" height="28" rx="4" />
+      <text x="16" y="135" class="boundary-t" font-size="12">Xen or QNX Hypervisor</text>
+      <rect class="box" x="6" y="160" width="388" height="58" rx="4" />
+      <text x="16" y="184" font-size="11.5">A-sample</text>
+      <text x="16" y="202" font-size="10.5" class="muted-t">new SoC, BSP</text>
+      {[['GPIO', 148, 186], ['UART', 210, 300], ['USB', 272, 326], ['Camera', 334, 352]].map(([h, x, tx]) => (
+        <g>
+          <rect class="box" x={x as number} y="182" width="54" height="26" rx="3" />
+          <text x={(x as number) + 27} y="199" text-anchor="middle" font-size="11">{h}</text>
+          <line class="path-hl" x1={(x as number) + 27} y1="182" x2={tx as number} y2="110" marker-end={AH} />
+        </g>
+      ))}
     </g>
   )}
 
