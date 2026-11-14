@@ -1,49 +1,41 @@
 ---
-// Redrawn generic diagram. Contains no client data.
-// V7.4: the target pipeline on top; the x86 software-in-the-loop mirror below,
-// with a recorded dataset feeding the simulated imager.
-const blocks = ['Imager', 'ISP', 'DSP stages', 'Application'];
+// The DMS application on the board, and the same application logic running on an x86 PC
+// against recorded data (software-in-the-loop). No hardware is simulated.
+const top = ['Capture', 'Pre-process', 'Analysis', 'Decision'];
+const bottom = ['OpenCV input', 'Pre-process', 'Analysis', 'Decision'];
 const bw = 130, gap = 26, x0 = 130;
 ---
 <svg class="dg" width="760" viewBox="0 0 760 260" role="img" aria-labelledby="sil-t sil-d">
-  <title id="sil-t">Target pipeline and its x86 software-in-the-loop mirror</title>
-  <desc id="sil-d">The same application runs on the edge SoC with a real camera, and on an x86 machine where the imager, ISP and DSP stages are simulated and a recorded dataset replaces the camera. The x86 side runs in CI.</desc>
+  <title id="sil-t">The DMS application on the board and on an x86 PC</title>
+  <desc id="sil-d">On the board, frames come from the IR camera and the stages run on the SoC. In software-in-the-loop, the same application logic runs on an x86 PC: frames come from recorded datasets through OpenCV and the stages run in parallel threads. The PC side runs in CI.</desc>
   <defs>
     <marker id="sil-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead" d="M0,0 L10,5 L0,10 z" /></marker>
   </defs>
-  <rect class="boundary" x={x0 - 12} y="14" width={blocks.length * (bw + gap) - gap + 24} height="82" rx="4" />
-  <text class="boundary-t" x={x0 - 4} y="10">Edge SoC (target)</text>
-  <rect class="boundary" x={x0 - 12} y="150" width={blocks.length * (bw + gap) - gap + 24} height="82" rx="4" />
-  <text class="boundary-t" x={x0 - 4} y="146">x86 simulation, runs in CI</text>
+  <rect class="boundary" x={x0 - 12} y="14" width={top.length * (bw + gap) - gap + 24} height="82" rx="4" />
+  <text class="boundary-t" x={x0 - 4} y="10">TDA4VM board</text>
+  <rect class="boundary" x={x0 - 12} y="150" width={bottom.length * (bw + gap) - gap + 24} height="82" rx="4" />
+  <text class="boundary-t" x={x0 - 4} y="146">x86 PC · parallel threads · runs in CI</text>
 
   <rect class="box" x="0" y="34" width="100" height="42" rx="4" />
   <text x="50" y="60" text-anchor="middle">IR camera</text>
   <line class="line" x1="100" y1="55" x2={x0 + 4} y2="55" marker-end="url(#sil-a)" />
 
   <rect class="box mine" x="0" y="170" width="100" height="42" rx="4" />
-  <text x="50" y="196" text-anchor="middle" class="mine-t">Dataset</text>
+  <text x="50" y="196" text-anchor="middle" class="mine-t">Datasets</text>
   <line class="path-hl" x1="100" y1="191" x2={x0 + 4} y2="191" marker-end="url(#sil-a)" />
 
-  {blocks.map((b, i) => {
+  {top.map((b, i) => {
     const x = x0 + i * (bw + gap);
-    const sim = i < 3;
     return (
       <g>
         <rect class="box" x={x} y="34" width={bw} height="42" rx="4" />
         <text x={x + bw / 2} y="60" text-anchor="middle">{b}</text>
-        <rect class={sim ? 'box mine' : 'box'} x={x} y="170" width={bw} height="42" rx="4" />
-        {sim ? (
-          <>
-            <text x={x + bw / 2} y="188" text-anchor="middle" class="mine-t" font-size="11">simulated</text>
-            <text x={x + bw / 2} y="204" text-anchor="middle" class="mine-t">{b}</text>
-          </>
-        ) : <text x={x + bw / 2} y="196" text-anchor="middle">{b}</text>}
-        {i < blocks.length - 1 && <line class="line" x1={x + bw} y1="55" x2={x + bw + gap - 2} y2="55" marker-end="url(#sil-a)" />}
-        {i < blocks.length - 1 && <line class="line" x1={x + bw} y1="191" x2={x + bw + gap - 2} y2="191" marker-end="url(#sil-a)" />}
+        <rect class={i === 0 ? 'box mine' : 'box'} x={x} y="170" width={bw} height="42" rx="4" />
+        <text x={x + bw / 2} y="196" text-anchor="middle" class={i === 0 ? 'mine-t' : ''}>{bottom[i]}</text>
+        {i < top.length - 1 && <line class="line" x1={x + bw} y1="55" x2={x + bw + gap - 2} y2="55" marker-end="url(#sil-a)" />}
+        {i < top.length - 1 && <line class="line" x1={x + bw} y1="191" x2={x + bw + gap - 2} y2="191" marker-end="url(#sil-a)" />}
       </g>
     );
   })}
-  <text class="muted-t" x={x0 + 3 * (bw + gap) + bw / 2} y="124" text-anchor="middle" font-size="11">same application code</text>
-  <line class="base" x1={x0 + 3 * (bw + gap) + bw / 2} y1="80" x2={x0 + 3 * (bw + gap) + bw / 2} y2="110" stroke-dasharray="3 3" />
-  <line class="base" x1={x0 + 3 * (bw + gap) + bw / 2} y1="132" x2={x0 + 3 * (bw + gap) + bw / 2} y2="166" stroke-dasharray="3 3" />
+  <text class="muted-t" x={x0 + 1.5 * (bw + gap) + bw / 2} y="118" text-anchor="middle" font-size="11">same application logic</text>
 </svg>

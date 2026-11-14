@@ -55,7 +55,7 @@ const experience = [
   <div class="top">
     <div>
       <h1>Resume</h1>
-      <p class="muted">{profile.role} · {profile.location}</p>
+      <p class="muted">{profile.role}</p>
     </div>
     <a class="btn btn-primary" href={profile.resumePdf} download={profile.resumePdfName}>Download PDF</a>
   </div>
@@ -79,7 +79,7 @@ const experience = [
       <ul>
         <li>Real-time camera-based driver monitoring on BeagleBone AI-64 (TI TDA4VM) classifying driver state from eye closure, gaze, yawning and head pose.</li>
         <li>IMX219 IR sensor over MIPI CSI-2 / V4L2 on embedded Linux (device-tree overlays); a GStreamer + TIOVX (OpenVX) pipeline offloading pre-processing to the vision pre-processing accelerator (VPAC) and C66x DSPs, optimised to run in real time.</li>
-        <li>An x86 software-in-the-loop environment simulating the TDA4VM cores, imager and DSPs for CI and dataset-based testing.</li>
+        <li>An x86 software-in-the-loop environment that runs the application on recorded datasets in parallel threads, for CI and accuracy testing.</li>
         <li>Co-author: <a href={profile.paper.url}>{profile.paper.title}</a>, IEEE MIUCC 2024.</li>
       </ul>
       <p><a href="/projects/driver-monitoring-tda4vm/">Case study →</a></p>

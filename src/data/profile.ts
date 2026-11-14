@@ -4,11 +4,10 @@ export const profile = {
   name: 'AbdElrahman Khalil',
   altName: 'AbdElrhman Mamdouh',
   role: 'Embedded Software Engineer',
-  location: 'Open to work anywhere',
   positioning: 'Embedded software engineer',
   positioningDetail:
     'I bring up Android and embedded Linux under hypervisors on new automotive hardware, write AUTOSAR Classic software for ECUs, and build AI tools that write and fix unit tests.',
-  availability: '2+ years in automotive · open to embedded application and embedded Linux roles, anywhere',
+  availability: '2+ years in automotive · open to embedded application and embedded Linux roles',
   description:
     'Embedded software engineer with 2+ years on automotive OEM and Tier-1 projects: AUTOSAR Classic, embedded Linux and Android bring-up under hypervisors, and multi-agent LLM tools for test engineering.',
   // Email is assembled in the browser to cut scraping.

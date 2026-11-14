@@ -78,9 +78,9 @@ Together with the accelerator offload above, this made the system run in real ti
 
 ## Testing without the board
 
-To develop and test without hardware, I built a software-in-the-loop (SIL) environment on x86. It simulates the TDA4VM's cores with virtual CPUs, the imager with OpenCV, and the DSPs with parallel threads, so the same application runs in CI. We tested it with open-source datasets and with our own dataset recorded with the IMX219, which also carries the calibration that head-pose estimation needs.
+To develop and test the algorithms without the board, I built a software-in-the-loop (SIL) environment on x86. The same application logic runs on a PC: frames come from recorded datasets through OpenCV, and the processing stages run in parallel threads. That let us run it in a CI/CD pipeline and measure accuracy on known data. We tested it with open-source datasets and with our own dataset recorded with the IMX219, which also carries the calibration that head-pose estimation needs.
 
-<Figure caption="The same application runs on the board with the real camera, and on x86 with simulated hardware and recorded data, which made it testable in CI." wide>
+<Figure caption="The same application logic runs on the board with the camera, and on a PC with recorded datasets, which made it testable in CI." wide>
   <SilMirror />
 </Figure>
 
