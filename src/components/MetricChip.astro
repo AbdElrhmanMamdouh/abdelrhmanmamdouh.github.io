@@ -1,5 +1,5 @@
 ---
-interface Props { value: string; label: string; size?: 'sm' | 'lg' }
+interface Props { value: string; label: string; size?: 'sm' | 'lg' | 'area' }
 const { value, label, size = 'sm' } = Astro.props;
 ---
 <div class:list={['metric', size]}>
@@ -12,4 +12,6 @@ const { value, label, size = 'sm' } = Astro.props;
   .label { font-size: var(--text-xs); color: var(--muted); line-height: 1.35; }
   .lg .value { font-size: var(--text-xl); }
   .lg .label { font-size: var(--text-sm); }
+  .area .value { font-family: var(--font-serif); font-weight: 600; font-size: var(--text-lg); }
+  .area .label { font-size: var(--text-sm); }
 </style>

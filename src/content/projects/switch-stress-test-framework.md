@@ -1,18 +1,18 @@
 ---
 title: "A stress-test framework that simulates the switch"
 short: "Switch stress tests"
-hook: "On a real ECU you cannot make the switch misbehave on demand, so I built a simulated switch that does."
+hook: "System-level stress testing in Vector CANoe: a simulated Ethernet switch in CAPL that scripts replies, delays and silence, with AES key wrap and AES-CMAC through an OpenSSL DLL."
 context: "Central ADAS ECU · test architecture"
-period: "Part of the ADAS ECU project"
+period: "10/2025 – 04/2026"
 role: "Designer and main author of the framework"
-team: "framework reused by the team"
+team: "framework adopted by the team"
 order: 4
 featured: false
 confidentiality: "client"
 approval: "pending"
 page: "summary"
 areas: ["Automotive"]
-tags: ["Vector CANoe", "CAPL", "C++", "OpenSSL", "Python", "Test architecture"]
+tags: ["Vector CANoe", "CAPL", "C++", "OpenSSL", "Python", "Test architecture", "Automotive Ethernet"]
 skills:
   - { name: "C++", level: "built" }
   - { name: "Python", level: "built" }
@@ -22,23 +22,19 @@ skills:
   - { name: "MACsec / IPsec / crypto", level: "built" }
   - { name: "System test frameworks", level: "production" }
   - { name: "System architecture", level: "built" }
-metrics:
-  - { value: "46", label: "tests I wrote; they found real CDD defects" }
-  - { value: "90", label: "tests on the framework, team-wide" }
+metrics: []
 ---
 
-## In short
+## Why it was needed
 
-The switch CDD has error paths, timeouts and corner cases that never happen on a healthy bench. To test them, I replaced the real switch with a simulated one that answers exactly as each test case says, including wrong answers, late answers and no answer at all.
+The switch CDD has error paths, timeouts and corner cases that a healthy switch never triggers. On a real ECU you cannot make the switch answer late, answer wrongly or stay silent when you want it to. So those paths stayed untested.
 
-## What I did
+## The approach
 
-- **Chose the approach.** I compared testing the CDD in isolation with heavy mocking against a system-level test on real Ethernet with a simulated switch. I chose the second for realism, and proved it with a small prototype first.
-- **Built the simulated switch** as a node in Vector CANoe, written in CAPL, that returns scripted replies per test case.
-- **Generated the boring parts.** Python generators build the reply dispatcher from a definition file, so adding a case means editing data, not code.
-- **Handled the secure side.** A small C++ library on OpenSSL provides AES key wrap and AES-CMAC, so the simulated switch can take part in the secure protocol.
-- **Made it safe to run.** Each test restores the normal configuration afterwards and writes an HTML report.
+I compared two options. One was to test the CDD in isolation with heavy mocking: lots of control, but no real network traffic. The other was a system-level test on real Ethernet, where the switch is replaced by a simulated node. I chose the second for realism and proved it with a small prototype before building it out.
 
-## Result
+The simulated switch is a CANoe node written in CAPL. For each test case it returns scripted management responses: correct, malformed, delayed, or nothing at all. Python generators build the response dispatcher from a YAML definition, so adding a case means editing data, not code. Because part of the protocol is secured, I wrote a C++ DLL on OpenSSL that gives CAPL AES key wrap and unwrap and AES-CMAC, so the simulated switch can take part in the secure handshake. Each test sends a diagnostic request, lets the CDD react, checks the resulting fault code or data identifier, restores the normal configuration and writes an HTML report.
 
-My 46 tests found real defects. One example: on a timeout, a routine answered with a negative response where the specification asked for a positive response carrying an error status. The team adopted the framework and reused it for 90 tests in total.
+## What it found
+
+My suites cover link state, the secure handshake and protection status, and they run on ECU hardware. They found real CDD defects. In one, a routine returned a negative response on a management-frame timeout, where the specification asked for a positive response that carries an error status. The team adopted the framework as a template for its own suites.

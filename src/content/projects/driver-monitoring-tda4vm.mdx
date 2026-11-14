@@ -1,102 +1,89 @@
 ---
-title: "Driver monitoring on a TI TDA4VM edge device"
-hook: "A real-time driver monitoring system on a BeagleBone AI-64, taken from under 1 FPS to 17 to 20 FPS, and published at an IEEE conference."
+title: "Driver monitoring system on TI TDA4VM"
+short: "Driver monitoring"
+hook: "Camera-based driver monitoring on a TI TDA4VM: an IR-sensitive camera over MIPI CSI-2, a GStreamer and OpenVX pipeline across the vision accelerator, DSPs and deep-learning accelerator, and driver-state classification."
 context: "Graduation project · Alexandria University"
 period: "2024"
-short: "Driver monitoring"
 page: "case-study"
-role: "Team member and co-author of the paper"
+role: "Camera bring-up, vision pipeline and software-in-the-loop environment; co-author of the paper"
 team: "graduation project team, funded and mentored by eJad"
 order: 2
 featured: true
 confidentiality: "academic"
 approval: "not-needed"
 areas: ["Embedded Linux", "Automotive"]
-tags: ["Embedded Linux", "TI TDA4VM", "BeagleBone AI-64", "GStreamer", "OpenVX (TIOVX)", "MIPI CSI-2", "V4L2", "Device trees", "DSP offload", "Computer vision", "Software-in-the-loop"]
+tags: ["Embedded Linux", "TI TDA4VM", "BeagleBone AI-64", "GStreamer", "OpenVX (TIOVX)", "TIDL", "MIPI CSI-2", "V4L2", "Device trees", "Computer vision", "Software-in-the-loop"]
 skills:
   - { name: "C", level: "evaluated" }
   - { name: "C++", level: "evaluated" }
+  - { name: "Python", level: "evaluated" }
   - { name: "Linux kernel / drivers", level: "evaluated" }
   - { name: "Device trees", level: "evaluated" }
   - { name: "System test frameworks", level: "evaluated" }
   - { name: "Performance optimisation", level: "evaluated" }
-metrics:
-  - { value: "17–20 FPS", label: "up from under 1 FPS" }
-  - { value: "~90%", label: "driver-state accuracy" }
-heroAlt: "Bar chart: the first pipeline ran at under 1 frame per second; the optimised pipeline at 17 to 20."
+metrics: []
 paper: "https://doi.org/10.1109/MIUCC62295.2024.10783523"
 ---
 import Figure from '../../components/Figure.astro';
 import RoleBox from '../../components/RoleBox.astro';
-import FpsChart from '../../components/diagrams/FpsChart.astro';
 import DmsPipeline from '../../components/diagrams/DmsPipeline.astro';
 import DriverStates from '../../components/diagrams/DriverStates.astro';
 import SilMirror from '../../components/diagrams/SilMirror.astro';
 
-## In one paragraph
+## Overview
 
-A driver monitoring system has to tell, from a camera pointed at the driver, whether the driver is focused, distracted, sleepy or drowsy, and it has to do this in real time on a small computer inside the car. Our team built such a system on a BeagleBone AI-64, a board based on the TI TDA4VM vision SoC. The first working pipeline ran at under one frame per second. By moving image work onto the SoC's dedicated hardware and removing work the system did not need, we brought it to 17 to 20 frames per second at about 90% accuracy. The work was published at IEEE MIUCC 2024.
+A driver monitoring system (DMS) watches the driver through a cabin camera and decides, frame by frame, whether they are focused, distracted, sleepy or drowsy. The EU General Safety Regulation now requires drowsiness and distraction warning in new cars, a cabin camera is the usual way to deliver it, and it has to run on the car's own hardware, not on a GPU in the trunk.
+
+We built a complete DMS on a BeagleBone AI-64, a board based on TI's TDA4VM, an automotive vision SoC with Arm cores, C66x and C7x DSPs, a matrix-multiply accelerator and a vision pre-processing accelerator. The work is published at IEEE MIUCC 2024.
 
 <RoleBox
-  owned="Camera bring-up on embedded Linux, the GStreamer and TIOVX pipeline and its optimisation, and the x86 software-in-the-loop environment. Co-author of the paper."
-  team="Designed the system together, evaluated it, and wrote the paper."
-  tools="Embedded Linux, device-tree overlays, V4L2, GStreamer, TIOVX (OpenVX), C, C++, Python."
+  owned="Bringing up the IR camera on embedded Linux, building the GStreamer and TIOVX pipeline that spreads the work across the SoC's accelerators, and the x86 software-in-the-loop environment."
+  team="We designed the vision algorithms and the decision logic together, evaluated the system on public and self-recorded datasets, and wrote the paper."
+  tools="Embedded Linux, device-tree overlays, V4L2, GStreamer, TIOVX (OpenVX), TIDL, ONNX Runtime, OpenCV, Dlib, C, C++, Python."
 />
 
-## Problem
+## How the system decides
 
-The system watches the driver through an infrared camera and classifies the driver's state from four cues: eye closure, gaze direction, yawning and head pose. For a warning to be useful it must come quickly, so the whole chain from camera to decision has to run continuously at a usable frame rate on an embedded board, not on a desktop GPU.
+Four cues describe the driver's state. **Eye closure** comes from the eye aspect ratio, computed from facial landmarks around each eye. **Yawning** is measured as the distance between the upper and lower lip landmarks. **Head pose** is estimated with OpenCV's `solvePnP`, matching a 3D head model to the 2D landmarks using the camera's calibration. **Gaze** comes from the pupil's position inside the eye region. A decision layer combines them into one of four states.
 
-<Figure caption="Four visual cues feed one classifier that outputs one of four driver states. The exact rules are described in the paper.">
+<Figure caption="Each cue comes from facial landmarks; a decision layer turns them into a driver state. Head pose and gaze catch distraction, eye closure and yawning catch drowsiness.">
   <DriverStates />
 </Figure>
 
-## Constraints
+Faces are found with YOLOv5-ti-lite, TI's variant of YOLOv5. We started with YOLOv8, but TIDL, TI's deep-learning library and runtime, did not support some of its pooling layers and its SiLU activation. The model is exported to ONNX, compiled with the TIDL tools and quantised to 8-bit integers so it runs on the C7x DSP and its matrix-multiply accelerator. Landmarks come from Dlib's 68-point shape predictor, which is fast enough for an embedded target.
 
-- **Heterogeneous SoC.** The TDA4VM has general-purpose CPU cores, an image signal processor (ISP) and C66x DSPs. Performance depends on putting each step on the right block.
-- **Camera bring-up.** An IMX219 infrared sensor connected over MIPI CSI-2, which had to be made to work under embedded Linux before anything else could run.
-- **A slow start.** The first end-to-end pipeline ran at under one frame per second.
-- **Testing without the board.** Development and regression testing could not depend on having the hardware and a driver in front of the camera.
+## Camera and pipeline on the SoC
 
-## Approach
+The camera is an IR-sensitive IMX219 module on a two-lane MIPI CSI-2 link, so it keeps working at night and in changing light. I brought it up under embedded Linux with device-tree overlays and the capture drivers, so it shows up as a standard V4L2 device.
 
-**Camera first.** The IR sensor was integrated over MIPI CSI-2 and V4L2 on embedded Linux, using device-tree overlays and the matching drivers, so the camera appeared as a normal video device.
+On top of it sits a GStreamer pipeline using TI's TIOVX-backed elements; TIOVX is TI's implementation of OpenVX. The point of the design is to keep each step on the hardware made for it:
 
-**Build the pipeline on the hardware blocks, not around them.** The pipeline was built with GStreamer and TIOVX, TI's implementation of the OpenVX standard. Image signal processing runs on the ISP and pre-processing runs on the C66x DSPs, so the CPU cores are left for the parts that need them.
+- **Image processing and pre-processing** (debayering, denoising, scaling, colour conversion) on the vision pre-processing accelerator (VPAC) and a C66x DSP.
+- **Face detection** on the C7x DSP and its matrix-multiply accelerator.
+- **Post-processing** (head pose, eye aspect ratio, mouth distance) on the second C66x DSP.
 
-<Figure caption="The pipeline from camera to driver state. The highlighted stages run on the ISP and the C66x DSPs instead of the CPU." wide>
+<Figure caption="From the IR sensor to a driver state, each stage runs on the block designed for it." wide>
   <DmsPipeline />
 </Figure>
 
-**Test without the board.** We built an x86 software-in-the-loop environment that simulates the TDA4VM cores, the imager and the DSPs. A recorded dataset replaces the live camera, so the same application can be tested in CI and measured against known data.
+## Making it real-time
 
-<Figure caption="The same application runs on the board with a real camera, and on x86 with simulated hardware and a dataset, which makes it testable in CI." wide>
+The first deployment on the board was far too slow to warn anyone. I profiled every stage, from reading a frame through pre-processing, inference and post-processing to writing the output. The fixes came from removing work the system did not need:
+
+- **Stop writing every frame to disk.** Stream the output over TCP from the GStreamer pipeline instead.
+- **Process one face.** A DMS only cares about the driver.
+- **Bypass frames that barely changed** since the previous one, using a difference threshold.
+
+Together with the accelerator offload above, this made the system run in real time on the board.
+
+## Testing without the board
+
+To develop and test without hardware, I built a software-in-the-loop (SIL) environment on x86. It simulates the TDA4VM's cores with virtual CPUs, the imager with OpenCV, and the DSPs with parallel threads, so the same application runs in CI. We tested it with open-source datasets and with our own dataset recorded with the IMX219, which also carries the calibration that head-pose estimation needs.
+
+<Figure caption="The same application runs on the board with the real camera, and on x86 with simulated hardware and recorded data, which made it testable in CI." wide>
   <SilMirror />
 </Figure>
 
-## The hard part
+## Publication
 
-**Symptom.** The first working pipeline produced under one frame per second: correct results, far too late to warn a driver.
-
-**How we found it.** We profiled the pipeline stage by stage to see where the time went.
-
-**Fix.** Three changes on top of the hardware offload: process only one face per frame (the driver), bypass frames the system did not need to analyse, and stop writing frames out during normal operation. Together with moving pre-processing to the ISP and DSPs, this brought the system to 17 to 20 frames per second.
-
-<Figure caption="Profiling and offloading took the pipeline from under 1 FPS to 17 to 20 FPS. The result is a range, so it is drawn as one.">
-  <FpsChart />
-</Figure>
-
-## Result
-
-- 17 to 20 frames per second on the BeagleBone AI-64, up from under 1.
-- About 90% accuracy in classifying the four driver states.
-- A software-in-the-loop environment for CI and dataset-based testing.
-- Published: *Optimizing Driver Monitoring System Performance on TI-TDA4VM Edge Device*, M. A. Fathy, A. Ramadan, A. Mamdouh, A. Emad, N. Atia, M. Ghareeb, A. Aboelkheir. 2024 International Mobile, Intelligent, and Ubiquitous Computing Conference (MIUCC), IEEE. DOI [10.1109/MIUCC62295.2024.10783523](https://doi.org/10.1109/MIUCC62295.2024.10783523).
-
-## What I learned
-
-On a heterogeneous SoC, the first question is not "how do I make this code faster" but "which block should this step run on". The second lesson was to measure before optimising: the largest gains came from removing work the system did not need, which profiling made obvious.
-
-## Code and data
-
-The code and dataset are not public; they belong to the whole team and the project sponsor. The paper is the reference.
+*Optimizing Driver Monitoring System Performance on TI-TDA4VM Edge Device.* M. A. Fathy, A. Ramadan, A. Mamdouh, A. Emad, N. Atia, M. Ghareeb, A. Aboelkheir. 2024 International Mobile, Intelligent, and Ubiquitous Computing Conference (MIUCC), IEEE. DOI [10.1109/MIUCC62295.2024.10783523](https://doi.org/10.1109/MIUCC62295.2024.10783523).

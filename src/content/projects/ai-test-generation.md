@@ -1,10 +1,10 @@
 ---
 title: "AI multi-agent test generation for embedded C"
 short: "AI test generation"
-hook: "A pipeline of LLM agents that writes unit tests for embedded C, builds and runs them, measures coverage and fixes its own mistakes."
+hook: "A LangGraph pipeline of LLM agents that writes CUnit tests for embedded C from requirements, then builds, runs and measures coverage, and sends every failure back to the agent that caused it."
 context: "Internal R&D tool · eJad"
 period: "02/2025 – present"
-role: "Started the multi-agent approach; sole author of the 2026 rewrite"
+role: "Started the multi-agent approach; sole author of the rewrite"
 team: "team tool, three main engineers"
 order: 3
 featured: true
@@ -12,7 +12,7 @@ confidentiality: "internal"
 approval: "pending"
 page: "summary"
 areas: ["AI"]
-tags: ["LangGraph", "Python", "Multi-agent systems", "CUnit", "RAG", "ASPICE SWE.4"]
+tags: ["LangGraph", "LangChain", "Python", "Multi-agent systems", "CUnit", "gcov / LCOV", "RAG", "ASPICE SWE.4"]
 skills:
   - { name: "Python", level: "built" }
   - { name: "Unit testing / coverage", level: "built" }
@@ -20,29 +20,32 @@ skills:
   - { name: "RAG", level: "built" }
   - { name: "Desktop tools / GUI (Qt)", level: "built" }
   - { name: "System architecture", level: "built" }
-metrics:
-  - { value: "60%", label: "less unit-test development time, measured on a task" }
-  - { value: "30%", label: "less effort in a commercial test tool" }
+metrics: []
 ---
 
-## In short
+## The problem
 
-Writing unit tests for automotive software is slow, careful work: read the requirements and the code, write tests, run them, measure coverage, get reviewed, repeat. I started an approach where several LLM agents share that work, each checking the others' output against real tools, not opinions.
+Unit verification for automotive software (ASPICE SWE.4) is careful, repetitive work. You read the requirements and the code, write a test specification and the tests, build them against mocks, run them, measure coverage, close the gaps, get the review, and do it again when something changes. A single prompt to an LLM produces tests that look right and often do not compile.
 
-## How it works
+## The idea
 
-- **Generate.** One agent writes a test specification from the requirements, another writes the tests.
-- **Build and fix.** The tests are compiled; build errors go back to an agent that fixes them.
-- **Run and measure.** Tests run, coverage is measured, and gaps go back as new work.
-- **Check requirements.** Every requirement must be traced to at least one test.
-- **Keep what works.** Once tests pass and meet coverage, they are locked; later rounds can only add.
+Split the job across several agents, and let real tools, not the model's opinion, decide whether each step worked:
 
-The 2026 rewrite, which I wrote alone, organises this as a LangGraph state graph with retry limits per stage, routing of each task to a suitable cloud or local model, and a desktop GUI.
+- One agent writes a test specification from the requirements, and a reviewer agent checks it.
+- Another agent writes CUnit tests from the specification.
+- The tests are compiled against mock headers. Build errors go back to a fix agent.
+- The tests run, and failures go back too.
+- gcov and LCOV measure coverage. Uncovered lines and requirements without a test become new work.
+- An analysis step writes the report: recommendations, dead code, and traceability from each requirement to its tests.
 
-## Result
+Once a set of tests builds, passes and reaches its coverage target, it becomes a locked "golden" baseline, and later rounds can only add to it. When a test file gets too large for the model's output limit, the agent returns a unified diff instead of the whole file.
 
-Unit-test development time dropped by 60% on a measured task, and effort in a commercial test tool by 30%. I also extended the team's retrieval-based generator, added integration-test generation, and built GitHub Copilot agents that turn test specifications into buildable test suites.
+## The rewrite
 
-## Limits
+I rewrote the tool on my own as a LangGraph state graph declared in YAML: setup, specification, generation, build, test, requirement check, coverage, re-mapping and analysis. Each stage has its own retry limit, and when a stage runs out of retries the graph starts a fresh iteration from a checkpoint. A model layer routes each task to a suitable provider: Gemini on Vertex AI, OpenAI-compatible models such as DeepSeek, or local models through Ollama when code must not leave the machine. Underneath sit Pydantic configuration, dependency injection, an event bus with correlated logs, SQLite storage of every run and LLM call, a pytest suite, a PySide6 GUI and a CLI.
 
-It does not help with test-bench scripting or hardware-specific configuration, and hardware-in-the-loop tests still need human knowledge of the ECU.
+## Around it
+
+I added generation of integration tests (SWE.5). I extended the team's retrieval-based generator for VectorCAST (LangChain, sentence embeddings, FAISS) with new providers and an offline mode. And I built GitHub Copilot agents and skills that turn Markdown test specifications into buildable CUnit suites.
+
+The tool shortened unit-test development on real tasks. It does not replace knowledge of the ECU, though: test-bench scripting and hardware-in-the-loop tests still need an engineer who knows the hardware.

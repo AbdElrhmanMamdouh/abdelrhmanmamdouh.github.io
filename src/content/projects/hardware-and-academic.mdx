@@ -1,6 +1,6 @@
 ---
 title: "Hardware and academic projects"
-hook: "Where the firmware habits came from: bare-metal drivers, PCBs made in-house, and analog front ends."
+hook: "Bare-metal AVR drivers in a layered MCAL / HAL architecture, in-house PCBs for an underwater robot's switching system, and analog front ends for signal processing."
 context: "Student and personal projects"
 period: "2022 – 2024"
 short: "Hardware projects"
@@ -23,7 +23,7 @@ import Figure from '../../components/Figure.astro';
 import Layered from '../../components/diagrams/Layered.astro';
 import Chain from '../../components/diagrams/Chain.astro';
 
-These projects came before my automotive work. They are short on purpose: they show where my habits come from, writing drivers from the register up, designing the board the firmware runs on, and caring about the signal before the software sees it.
+Before automotive software, I worked closer to the metal: writing drivers from the register up, designing the boards the firmware runs on, and shaping analog signals before any code sees them.
 
 ## Smart home on ATmega32 (2023)
 
@@ -38,7 +38,6 @@ A home-control system on an AVR ATmega32, written in C with a strict layered arc
   ]} />
 </Figure>
 
-`C` `AVR` `bare-metal drivers` `layered architecture`
 
 ## ROV switching system and in-house PCBs (2022 – 2024)
 
@@ -51,11 +50,10 @@ Hardware engineer on ROBO-TECH, a student underwater-robotics team. I designed a
   ]} fanout={['Flash', 'Laser', 'Solenoid']} fanoutTitle="synchronised loads" />
 </Figure>
 
-`PCB design` `Altium` `Eagle` `circuit design`
 
-## Embedded speech-recognition module (2022)
+## Speech-recognition front end (2022)
 
-A number-recognition module with its own analog front end: a microphone and speaker stage built with op-amps, then spectrum analysis with the FFT and recognition in MATLAB, at about 90% accuracy.
+A number-recognition module with its own analog front end: a microphone and speaker stage built with op-amps, then spectrum analysis with the FFT and spoken-digit recognition in MATLAB.
 
 <Figure caption="The analog stage decides how clean the signal is before any software runs; the FFT turns it into features that can be recognised." wide>
   <Chain id="speech" title="Speech-recognition signal chain" desc="Microphone, op-amp front end, sampling, FFT spectrum analysis, number recognition." blocks={[
@@ -63,11 +61,10 @@ A number-recognition module with its own analog front end: a microphone and spea
     { t: 'Op-amp stage', s: 'analog front end', hl: true },
     { t: 'Sampling' },
     { t: 'FFT', s: 'spectrum analysis' },
-    { t: 'Recognition', s: 'MATLAB, ~90%' },
+    { t: 'Recognition', s: 'MATLAB' },
   ]} />
 </Figure>
 
-`analog front end` `MATLAB` `DSP`
 
 ## Line-following industrial robot (2024)
 
@@ -80,9 +77,3 @@ A robot that follows a line and avoids obstacles, using IR and ultrasonic sensor
     { t: 'Zone-based', s: 'navigation', hl: true },
   ]} fanout={['Motors', 'SD-card log']} />
 </Figure>
-
-`sensors` `control` `embedded C`
-
-## What these taught me
-
-Writing every driver myself on an 8-bit part is why I read datasheets before code, and why layering came naturally later on AUTOSAR. Making boards in-house taught me to design for testing and repair. The speech module taught me that a clean signal saves more effort than clever software.

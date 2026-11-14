@@ -3,28 +3,24 @@ import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import MetricChip from '../components/MetricChip.astro';
 import Experience from '../components/Experience.astro';
-import { profile, headlineMetrics } from '../data/profile';
+import { profile, focusAreas } from '../data/profile';
 import { skillGroups } from '../data/skills';
 import { allProjects } from '../lib/projects';
+import { personLd, personId, paperLd } from '../lib/schema';
 
 const projects = await allProjects();
 const featured = projects.filter((p) => p.data.featured).slice(0, 4);
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: profile.name,
-  alternateName: profile.altName,
-  jobTitle: profile.role,
-  url: Astro.site?.toString(),
-  sameAs: [profile.linkedin, profile.github],
-  alumniOf: 'Alexandria University',
-  subjectOf: { '@type': 'ScholarlyArticle', name: profile.paper.title, sameAs: profile.paper.url },
-};
+const jsonLd = [
+  { '@type': 'ProfilePage', '@id': `${Astro.site}#page`, url: Astro.site?.toString(), mainEntity: { '@id': personId(Astro.site) } },
+  personLd(Astro.site),
+  paperLd(Astro.site),
+];
 ---
 <Base jsonLd={jsonLd}>
   <section class="hero" aria-labelledby="hero-h">
-    <h1 id="hero-h">{profile.positioning}</h1>
+    <h1 id="hero-h">{profile.name}</h1>
+    <p class="role">{profile.positioning}</p>
     <p class="sub">{profile.positioningDetail}</p>
     <p class="avail mono">{profile.availability}</p>
     <div class="actions">
@@ -34,14 +30,14 @@ const jsonLd = {
     </div>
   </section>
 
-  <section class="metrics" aria-label="Highlights">
-    {headlineMetrics.map((m) => <MetricChip value={m.value} label={m.label} size="lg" />)}
+  <section class="metrics" aria-label="What I work on">
+    {focusAreas.map((m) => <MetricChip value={m.value} label={m.label} size="area" />)}
   </section>
 
   <section class="section" aria-labelledby="feat-h">
     <div class="head">
       <h2 id="feat-h">Featured work</h2>
-      <a href="/projects/">All 10 projects →</a>
+      <a href="/projects/">All projects →</a>
     </div>
     <div class="grid feat">
       {featured.map((p) => <ProjectCard project={p} />)}
@@ -79,9 +75,10 @@ const jsonLd = {
 </Base>
 
 <style>
-  .hero h1 { font-size: var(--text-3xl); margin-bottom: var(--space-4); }
+  .hero h1 { font-size: var(--text-3xl); margin-bottom: var(--space-2); }
   @media (min-width: 1024px) { .hero h1 { font-size: var(--text-4xl); } }
-  .sub { font-size: var(--text-lg); line-height: 1.5; max-width: 40ch; margin-bottom: var(--space-4); }
+  .role { font-family: var(--font-serif); font-weight: 600; font-size: var(--text-xl); color: var(--accent); margin-bottom: var(--space-4); }
+  .sub { font-size: var(--text-lg); line-height: 1.5; max-width: 60ch; margin-bottom: var(--space-4); }
   .avail { font-size: var(--text-sm); color: var(--muted); margin-bottom: var(--space-6); }
   .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
   .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); margin-top: var(--space-8); padding: var(--space-5) 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }

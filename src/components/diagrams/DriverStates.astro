@@ -2,12 +2,12 @@
 // Redrawn generic diagram. Contains no client data.
 // V7.3: four visual cues feed a classifier that outputs one of four driver states.
 // The exact rules are in the paper; this diagram does not reproduce them.
-const cues = ['Eye closure', 'Gaze direction', 'Yawning', 'Head pose'];
+const cues = ['Eye aspect ratio', 'Pupil position', 'Lip distance', 'Head pose (PnP)'];
 const states = ['Focused', 'Distracted', 'Sleepy', 'Drowsy'];
 ---
 <svg class="dg" width="640" viewBox="0 0 640 230" role="img" aria-labelledby="dst-t dst-d">
-  <title id="dst-t">From visual cues to driver state</title>
-  <desc id="dst-d">Eye closure, gaze direction, yawning and head pose feed a state classifier, which outputs focused, distracted, sleepy or drowsy.</desc>
+  <title id="dst-t">From facial landmarks to driver state</title>
+  <desc id="dst-d">Eye aspect ratio, pupil position, lip distance and head pose from solvePnP feed a decision layer, which outputs focused, distracted, sleepy or drowsy.</desc>
   <defs>
     <marker id="dst-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead" d="M0,0 L10,5 L0,10 z" /></marker>
   </defs>
@@ -19,8 +19,8 @@ const states = ['Focused', 'Distracted', 'Sleepy', 'Drowsy'];
     </g>
   ))}
   <rect class="box mine" x="250" y="86" width="140" height="58" rx="4" />
-  <text x="320" y="112" text-anchor="middle" class="mine-t">State</text>
-  <text x="320" y="130" text-anchor="middle" class="mine-t">classifier</text>
+  <text x="320" y="112" text-anchor="middle" class="mine-t">Decision</text>
+  <text x="320" y="130" text-anchor="middle" class="mine-t">layer</text>
   {states.map((s, i) => (
     <g>
       <line class="line" x1="390" y1="115" x2="476" y2={34 + i * 52} marker-end="url(#dst-a)" />

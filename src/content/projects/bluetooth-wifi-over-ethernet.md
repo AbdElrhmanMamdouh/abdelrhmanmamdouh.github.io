@@ -1,7 +1,7 @@
 ---
 title: "Bluetooth and Wi-Fi over Ethernet"
 short: "BT/Wi-Fi over Ethernet"
-hook: "How do you run wireless phone projection on a cluster with no radio? A two-ECU architecture, and a proof of concept on an ESP32."
+hook: "A two-ECU architecture that serves Bluetooth and Wi-Fi from an AUTOSAR Classic radio ECU to a Linux cluster over SOME/IP, proven with ESP32 firmware and a BlueZ-compatible D-Bus facade."
 context: "Connectivity and cluster ECUs · motorcycle OEM"
 period: "10/2026 – 11/2026"
 role: "Architect; sole builder of the proof of concept"
@@ -12,35 +12,38 @@ confidentiality: "client"
 approval: "pending"
 page: "summary"
 areas: ["Connectivity", "Automotive"]
-tags: ["System architecture", "SOME/IP", "Bluetooth", "ESP32 / ESP-IDF", "BlueZ / D-Bus", "IPsec", "pytest"]
+tags: ["System architecture", "SOME/IP", "Bluetooth Classic / BLE", "ESP32 / ESP-IDF", "FreeRTOS", "BlueZ / D-Bus", "IPsec", "pytest"]
 skills:
   - { name: "C", level: "built" }
   - { name: "Python", level: "built" }
-  - { name: "AUTOSAR Classic / CDD", level: "built" }
   - { name: "MACsec / IPsec / crypto", level: "built" }
-  - { name: "SOME/IP", level: "built" }
+  - { name: "SOME/IP", level: "evaluated" }
   - { name: "Bluetooth Classic / BLE", level: "built" }
   - { name: "RTOS / MCU firmware", level: "built" }
   - { name: "Unit testing / coverage", level: "built" }
   - { name: "System test frameworks", level: "built" }
   - { name: "System architecture", level: "built" }
-metrics:
-  - { value: "1,500+", label: "automated tests and checks" }
-  - { value: "16", label: "checks on hardware with a real phone" }
+metrics: []
 ---
 
-## In short
+## The problem
 
-A Linux instrument cluster has to run wireless phone projection, but the only Bluetooth and Wi-Fi radio sits in a different ECU, and the two are joined only by Ethernet. The projection software on the cluster expects a local Bluetooth service and cannot be changed. I designed how the two ECUs share the radio, then built the proof of concept alone.
+A Linux instrument cluster has to run wireless phone projection. The projection stack is certified and cannot be changed, and it expects a local Bluetooth service and local RFCOMM sockets. But the only Bluetooth and Wi-Fi radio sits in a separate AUTOSAR Classic connectivity ECU, and the two ECUs share nothing except Ethernet. There is no file-descriptor passing, no shared memory and no HCI passthrough.
 
-## Key decisions
+## The architecture
 
-- **One Bluetooth stack**, on the radio ECU only. The cluster gets a thin proxy that looks local to the software above it.
-- **The radio ECU decides.** A policy manager on the radio ECU owns connections; the cluster asks and is granted. The radio ECU can reconnect phones by itself when the cluster is off.
-- **SOME/IP over TCP for control**, and a stream service that resumes from the last byte after a link drop.
-- **Phone network traffic** through a tunnel protected by IPsec, sized so packets still fit after the extra headers.
-- **Security.** I pointed out that the chosen IPsec mode authenticates but does not encrypt, and raised it as a customer decision.
+I designed it around a few decisions:
 
-## Proof of concept
+- **One Bluetooth stack, on the radio ECU.** Multiplexing HCI between two hosts was rejected.
+- **A thin client proxy on the cluster.** To the software above it, the proxy looks like a local BlueZ service. D-Bus over Ethernet was rejected.
+- **The radio ECU decides.** A policy manager there owns connections, with the cluster requesting and being granted. It reconnects bonded phones by itself when the cluster is off.
+- **SOME/IP over TCP for control.** Profile data goes through a stream service with byte offsets and acknowledgements, so it resumes where it stopped after a link drop.
+- **Phone IP traffic through a layer-2 GRETAP tunnel under IPsec,** so the phone's Wi-Fi client sits on the cluster's subnet, with the inner MTU reduced and TCP MSS clamped so packets still fit after the extra headers.
 
-An ESP32 plays the radio ECU, a Linux PC plays the cluster, and a real Android phone connects through them. A simulation model of the whole gateway runs the same scenarios without hardware. It is verified by 56 scenarios, 928 Python tests and 607 C unit checks, plus 16 checks on hardware with a real phone.
+On security, I pointed out that IPsec AH authenticates traffic but does not encrypt it. Fields that carry secrets therefore need ESP or encryption at the application layer. I raised that as a decision for the customer.
+
+## The proof of concept
+
+I built it on real hardware. An ESP32 plays the radio ECU: C firmware on ESP-IDF and FreeRTOS with Bluedroid for Classic and BLE, plus OTA updates. A Linux PC plays the cluster, with a BlueZ-compatible facade on a private D-Bus. A real Android phone connects through both. JSON over TCP stands in for SOME/IP, and HMAC-SHA256 mutual authentication stands in for link protection.
+
+A virtual-time simulation of the whole gateway runs the same scenarios without hardware: connection order, reconnects, losing the cluster, link drops, faults, several phones and teardown. The scenarios run against the model and, where possible, on the hardware. Unit tests cover the Python side with pytest and the pure-logic C modules on the host. The results went back to the customer as requirements for the production stack, along with a go / no-go recommendation.

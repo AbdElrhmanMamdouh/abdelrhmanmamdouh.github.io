@@ -11,7 +11,7 @@ const { caption, wide = false } = Astro.props;
   .fig-body { background: transparent; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .fig-body :global(svg) { display: block; max-width: 100%; height: auto; }
   /* On phones keep labels readable: diagrams keep a minimum width and scroll sideways. */
-  @media (max-width: 639px) { .fig-body :global(svg) { max-width: none; width: 600px; } .fig figcaption::before { content: 'Scroll sideways to see the whole diagram. '; } }
+  @media (max-width: 639px) { .fig-body :global(svg) { max-width: none; width: 600px; } }
   .fig { max-width: var(--measure); }
   .fig.wide { max-width: 1000px; }
 </style>

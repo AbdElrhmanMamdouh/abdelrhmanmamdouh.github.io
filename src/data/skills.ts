@@ -17,7 +17,7 @@ export const skillGroups: { id: string; name: string; skills: string[] }[] = [
   },
   {
     id: 'embedded-linux',
-    name: 'Embedded Linux and platforms',
+    name: 'Embedded Linux, platforms and MCUs',
     skills: ['Linux kernel / drivers', 'Device trees', 'Yocto', 'Hypervisors (Xen, QNX)', 'Android / AAOS / AOSP', 'RTOS / MCU firmware'],
   },
   {

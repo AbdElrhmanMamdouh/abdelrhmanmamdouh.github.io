@@ -1,35 +1,43 @@
 ---
 import Base from './Base.astro';
 import Tag from '../components/Tag.astro';
-import MetricChip from '../components/MetricChip.astro';
 import CardDiagram from '../components/diagrams/CardDiagram.astro';
-import { profile } from '../data/profile';
+import { personLd, personId } from '../lib/schema';
 import type { Project } from '../lib/projects';
 interface Props { project: Project }
 const { project } = Astro.props;
 const d = project.data;
 const summary = d.page === 'summary';
-const confNote: Record<string, string> = {
-  client: 'Client work, described in general terms. Names and identifiers are left out on purpose, and the diagram shows the general technology, not the client’s system.',
-  internal: 'Internal tool, described in general terms. The diagram shows the general idea, not the tool itself.',
-  academic: 'Team project. Diagrams are my own redrawings, not figures from the paper.',
-  open: 'Personal and student projects.',
-};
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: d.title,
-  description: d.hook,
-  author: { '@type': 'Person', name: profile.name, url: Astro.site?.toString() },
-  url: new URL(Astro.url.pathname, Astro.site).toString(),
-};
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const jsonLd = [
+  {
+    '@type': 'TechArticle',
+    headline: d.title,
+    description: d.hook,
+    keywords: d.tags.join(', '),
+    about: d.areas,
+    author: { '@id': personId(Astro.site) },
+    image: new URL('/og/default.png', Astro.site).toString(),
+    inLanguage: 'en',
+    url: pageUrl,
+    mainEntityOfPage: pageUrl,
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: Astro.site?.toString() },
+      { '@type': 'ListItem', position: 2, name: 'Projects', item: new URL('/projects/', Astro.site).toString() },
+      { '@type': 'ListItem', position: 3, name: d.title, item: pageUrl },
+    ],
+  },
+  personLd(Astro.site),
+];
 ---
-<Base title={d.title} description={d.hook} jsonLd={jsonLd}>
+<Base title={d.title} description={d.hook} jsonLd={jsonLd} ogType="article">
   <article class="cs">
     <p class="eyebrow"><a href="/projects/">Projects</a> / {d.context} · {d.period}</p>
     <h1>{d.title}</h1>
     <p class="lead">{d.hook}</p>
-    <p class="note">{confNote[d.confidentiality]}</p>
     {summary && (
       <>
         <dl class="facts">
@@ -38,9 +46,6 @@ const jsonLd = {
         </dl>
         <div class="hero-dg"><CardDiagram id={project.id} decorative={false} /></div>
       </>
-    )}
-    {d.metrics.length > 0 && (
-      <div class="strip">{d.metrics.map((m) => <MetricChip value={m.value} label={m.label} size="lg" />)}</div>
     )}
     <div class="prose content"><slot /></div>
     <section class="techs" aria-labelledby="tech-h">

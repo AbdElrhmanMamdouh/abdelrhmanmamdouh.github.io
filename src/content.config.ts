@@ -12,7 +12,7 @@ const projects = defineCollection({
   schema: z
     .object({
       title: z.string().max(80),
-      hook: z.string().min(20).max(180),
+      hook: z.string().min(20).max(220),
       context: z.string(),
       period: z.string(),
       role: z.string(),

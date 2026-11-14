@@ -1,6 +1,5 @@
 ---
 import Tag from './Tag.astro';
-import MetricChip from './MetricChip.astro';
 import Thumb from './Thumb.astro';
 import { isPublished, projectUrl, type Project } from '../lib/projects';
 interface Props { project: Project; headingLevel?: 'h2' | 'h3' }
@@ -18,20 +17,12 @@ const allTags = [...d.areas, ...d.tags];
       {published ? <a href={projectUrl(project)}>{d.title}</a> : d.title}
     </H>
     <p class="hook">{d.hook}</p>
-    {d.metrics.length > 0 && (
-      <div class="metrics">
-        {d.metrics.slice(0, 3).map((m) => <MetricChip value={m.value} label={m.label} />)}
-      </div>
-    )}
     <div class="tags">{d.tags.slice(0, 5).map((t) => <Tag name={t} />)}</div>
     <p class="more">
       {published && (
-        <a href={projectUrl(project)}>{d.page === 'summary' ? 'Read summary' : 'Read case study'}<span class="visually-hidden">: {d.title}</span> →</a>
+        <a href={projectUrl(project)}>Read more<span class="visually-hidden">: {d.title}</span> →</a>
       )}
       {d.repo && <> · <a href={d.repo}>Code →</a></>}
-      {(d.confidentiality === 'client' || d.confidentiality === 'internal') && (
-        <span class="conf">{d.confidentiality === 'client' ? 'Client work' : 'Internal tool'} · generalised</span>
-      )}
     </p>
   </div>
 </article>

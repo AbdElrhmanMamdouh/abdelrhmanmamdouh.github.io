@@ -1,15 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
+import { personLd, paperLd } from '../lib/schema';
 import Experience from '../components/Experience.astro';
 import { profile } from '../data/profile';
 ---
-<Base title="About" description="About AbdElrahman Khalil: embedded software engineer. Background, education, publication and leadership.">
+<Base jsonLd={[{ '@type': 'ProfilePage', mainEntity: personLd(Astro.site) }, paperLd(Astro.site)]} ogType="profile" title="About" description="About AbdElrahman Khalil: embedded software engineer. Background, education, publication and leadership.">
   <div class="prose">
     <h1>About</h1>
-    <p class="lead">I am an embedded software engineer working on automotive projects for OEMs and Tier-1 suppliers through {profile.employer}.</p>
-    <p>My work sits close to the hardware. On microcontrollers I write embedded C on AUTOSAR Classic: an Ethernet switch driver, UDS diagnostics, MACsec, and the unit and system tests around them, under ASPICE and ISO 26262. On application processors I bring up embedded Linux and Android Automotive as guests under Xen and QNX: kernel drivers, device trees, Yocto and Bluetooth.</p>
-    <p>Alongside that I build AI tooling for embedded teams. I started a multi-agent LLM approach to unit-test generation at work, and rewrote the tool as a LangGraph pipeline that builds, runs and fixes its own tests.</p>
-    <p class="muted small">Name note: my publications and GitHub account use <strong>{profile.altName}</strong>. It is the same person.</p>
+    <p class="lead">I'm an embedded software engineer at {profile.employer}, working on automotive projects for OEMs and Tier-1 suppliers.</p>
+    <p>Most of my time goes into making software run on hardware that is new to everyone. On cockpit platforms that means bringing up Android Automotive and Linux as guests under Xen and QNX: adapting the BSP to new boards, writing device trees, fixing kernel drivers, and deciding which domain owns which device. On safety microcontrollers it means AUTOSAR Classic in C: a Complex Device Driver for an Ethernet switch, UDS diagnostics, MACsec, and the unit and system tests around them, under ASPICE and ISO 26262.</p>
+    <p>Alongside that I build AI tools for embedded teams. I started a multi-agent approach to unit-test generation at work, then rewrote it as a LangGraph pipeline that builds, runs and fixes its own tests.</p>
+    <p class="muted small">My publications and GitHub account use the name <strong>{profile.altName}</strong>.</p>
   </div>
 
   <section class="section" aria-labelledby="tl-h">
@@ -20,7 +21,7 @@ import { profile } from '../data/profile';
   <section class="section prose" aria-labelledby="edu-h">
     <h2 id="edu-h">Education</h2>
     <p><strong>B.Sc. in Communication and Electronics Engineering</strong>, Alexandria University, 2019 – 2024.</p>
-    <p>Courses: Embedded Systems, ITI, 2023 (162 hours); Visual Embedded Android (AOSP), Udemy; AI course, Tech Pathways MENA Program.</p>
+    <p>Courses: Embedded Systems, ITI, 2023; Visual Embedded Android (AOSP), Udemy; AI course, Tech Pathways MENA Program.</p>
   </section>
 
   <section class="section prose" aria-labelledby="pub-h">

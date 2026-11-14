@@ -3,23 +3,23 @@
 // V7.2: vision pipeline, left to right, with the hardware block each stage runs on
 // where the record states it (ISP, C66x DSPs). Other stages carry no core label.
 const stages = [
-  { t: 'IR camera', s: 'IMX219', core: 'sensor' },
-  { t: 'Capture', s: 'CSI-2 · V4L2', core: 'Linux driver' },
-  { t: 'Image signal', s: 'processing', core: 'ISP', hl: true },
-  { t: 'Pre-processing', s: 'TIOVX / OpenVX', core: 'C66x DSPs', hl: true },
-  { t: 'Inference', s: 'face cues', core: '' },
-  { t: 'Driver state', s: '4 classes', core: '' },
+  { t: 'IR camera', s: 'IMX219 · CSI-2', core: 'V4L2 capture' },
+  { t: 'Pre-process', s: 'debayer · scale', core: 'VPAC · C66x', hl: true },
+  { t: 'Face detection', s: 'YOLOv5-ti-lite', core: 'C7x + MMA', hl: true },
+  { t: 'Landmarks', s: '68 points', core: '' },
+  { t: 'Features', s: 'pose, EAR, gaze', core: 'C66x', hl: true },
+  { t: 'Driver state', s: 'decision layer', core: '' },
 ];
 const bw = 150, gap = 22, y = 40, h = 64;
 ---
 <svg class="dg" width={stages.length * (bw + gap) - gap + 2} viewBox={`0 0 ${stages.length * (bw + gap) - gap + 2} 160`} role="img" aria-labelledby="dmsp-t dmsp-d">
   <title id="dmsp-t">Driver monitoring vision pipeline</title>
-  <desc id="dmsp-d">IR camera, capture over MIPI CSI-2, image signal processing on the ISP, pre-processing on the C66x DSPs, inference, and driver-state classification. GStreamer connects the stages.</desc>
+  <desc id="dmsp-d">IMX219 IR camera captured over MIPI CSI-2 and V4L2; pre-processing on the vision accelerator and a C66x DSP; face detection with YOLOv5-ti-lite on the C7x DSP and matrix-multiply accelerator; 68-point facial landmarks; head pose, eye aspect ratio and gaze features on a C66x DSP; and a decision layer that outputs the driver state.</desc>
   <defs>
     <marker id="dmsp-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead" d="M0,0 L10,5 L0,10 z" /></marker>
   </defs>
   <rect class="boundary" x="1" y="18" width={stages.length * (bw + gap) - gap} height="126" rx="4" />
-  <text class="boundary-t" x="10" y="12">GStreamer pipeline on the edge SoC</text>
+  <text class="boundary-t" x="10" y="12">GStreamer + TIOVX pipeline on the TDA4VM</text>
   {stages.map((st, i) => {
     const x = 1 + i * (bw + gap);
     return (

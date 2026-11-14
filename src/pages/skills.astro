@@ -22,7 +22,7 @@ for (const g of skillGroups) for (const s of g.skills) {
 const best = (s: string): Level =>
   (evidence.get(s) ?? []).reduce<Level>((b, e) => (levelRank[e.level] > levelRank[b] ? e.level : b), 'evaluated');
 ---
-<Base title="Skills" description="Skills grouped by area, each linked to the projects that show it, with an honest evidence level.">
+<Base title="Skills" description="Skills grouped by area, each linked to the projects that show it and how far I took it.">
   <h1>Skills</h1>
   <p class="lead">Each skill links to the projects where I used it. The mark shows how far I took it.</p>
 
@@ -48,7 +48,7 @@ const best = (s: string): Level =>
               <span class="skill">
                 <span class="mark" aria-hidden="true" title={levelLabel[lv]}>{levelMark[lv]}</span>
                 {s}
-                <span class="visually-hidden"> ({levelWord[lv]})</span>
+                <span class="lvl">{levelWord[lv]}</span>
               </span>
               <span class="ev">
                 {ev.map((e) => (e.url ? <a href={e.url} title={e.title}>{e.short}</a> : <span>{e.short}</span>))}
@@ -77,4 +77,5 @@ const best = (s: string): Level =>
   .mark { font-family: var(--font-mono); color: var(--accent); display: inline-block; width: 1.4em; }
   .ev { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); font-size: var(--text-sm); align-items: center; }
   .ev a { padding: 2px 0; }
+  .lvl { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted); margin-left: var(--space-2); }
 </style>

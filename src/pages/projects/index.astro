@@ -1,14 +1,25 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { allProjects } from '../../lib/projects';
+import { allProjects, isPublished, projectUrl } from '../../lib/projects';
+import { personLd } from '../../lib/schema';
 
 const projects = await allProjects();
 const areas = ['Automotive', 'Embedded Linux', 'Connectivity', 'AI', 'Hardware'];
+const jsonLd = [
+  {
+    '@type': 'ItemList',
+    name: 'Projects',
+    itemListElement: projects.filter(isPublished).map((p, i) => ({
+      '@type': 'ListItem', position: i + 1, name: p.data.title, url: new URL(projectUrl(p), Astro.site).toString(),
+    })),
+  },
+  personLd(Astro.site),
+];
 ---
-<Base title="Projects" description="Embedded software projects: automotive Ethernet, Bluetooth and Android bring-up under hypervisors, AI test generation, embedded vision and hardware.">
+<Base title="Projects" jsonLd={jsonLd} description="Embedded software projects: automotive Ethernet, Bluetooth and Android bring-up under hypervisors, AI test generation, embedded vision and hardware.">
   <h1>Projects</h1>
-  <p class="lead">Ten projects across automotive Ethernet, embedded Linux and Android, connectivity and AI tooling. Client work is described in general terms.</p>
+  <p class="lead">Platform bring-up, AUTOSAR Classic, automotive Ethernet, connectivity, embedded vision and AI tooling.</p>
 
   <div class="filter" role="group" aria-label="Filter projects by area">
     <a class="chip" href="/projects/" data-tag="">All</a>
@@ -17,7 +28,7 @@ const areas = ['Automotive', 'Embedded Linux', 'Connectivity', 'AI', 'Hardware']
   <p class="status muted" aria-live="polite" hidden></p>
 
   <div class="grid" id="project-grid">
-    {projects.map((p) => <ProjectCard project={p} />)}
+    {projects.map((p) => <ProjectCard project={p} headingLevel="h2" />)}
   </div>
 
   <!-- Tag filter: works from ?tag=… links anywhere on the site. Without JS, all cards show. -->
