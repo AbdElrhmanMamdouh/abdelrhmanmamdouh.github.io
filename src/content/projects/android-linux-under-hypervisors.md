@@ -58,7 +58,3 @@ On this cockpit platform, one chip runs several operating systems side by side u
 ## Also on this platform
 
 Crash analysis of third-party apps from logs and tombstones, a Wi-Fi passthrough plan with ownership split between domains, and a suspend-to-RAM design across all domains.
-
-## What I can go deeper on in an interview
-
-How to decide which domain owns a device; how an evaluation-board BSP breaks on real hardware; how to debug an interrupt that never arrives through a hypervisor.

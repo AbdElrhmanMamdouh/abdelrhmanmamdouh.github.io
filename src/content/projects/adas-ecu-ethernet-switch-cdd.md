@@ -41,7 +41,3 @@ A central ADAS ECU connects its processors, cameras, radars and the vehicle netw
 - **Diagnostics and security.** Freeze frames for fault codes, a security fault code built from the debug-lock and secure-boot states, and maintenance of the MACsec part of the CDD.
 - **Root causes.** Lost MACsec error history (the switch clears entries when they are read), a missing fault code caused by a small queue delay that added up over time, and log drops caused by a message that no longer fit once all the network headers were counted.
 - **Testing.** The unit-test framework with MC/DC test design, and a stress-test framework that simulates the switch ([see that project](/projects/switch-stress-test-framework/)).
-
-## What I can go deeper on in an interview
-
-How a timing drift of a few milliseconds turns into a missing fault code; how to find the effective MTU for a log message; why "read clears" behaviour in hardware breaks CDD assumptions.

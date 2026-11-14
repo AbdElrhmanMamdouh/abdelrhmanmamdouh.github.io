@@ -10,8 +10,8 @@ const { project } = Astro.props;
 const d = project.data;
 const summary = d.page === 'summary';
 const confNote: Record<string, string> = {
-  client: 'Client work, described in general terms. Names and identifiers are left out on purpose, and the diagram shows the general technology, not the client’s system. I am happy to go deeper in an interview.',
-  internal: 'Internal tool, described in general terms. The diagram shows the general idea, not the tool itself. I am happy to go deeper in an interview.',
+  client: 'Client work, described in general terms. Names and identifiers are left out on purpose, and the diagram shows the general technology, not the client’s system.',
+  internal: 'Internal tool, described in general terms. The diagram shows the general idea, not the tool itself.',
   academic: 'Team project. Diagrams are my own redrawings, not figures from the paper.',
   open: 'Personal and student projects.',
 };
