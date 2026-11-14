@@ -1,0 +1,74 @@
+/* Palette D "Paper & Oxblood" (PORTFOLIO_PLAN section 4.2), type scale (4.4), spacing (4.5).
+   Light is the default. Dark switches the WHOLE set; never reuse a light accent in dark. */
+
+@font-face { font-family: 'Source Serif 4'; font-weight: 600; font-style: normal; font-display: swap;
+  src: url('/fonts/source-serif-4-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Sans'; font-weight: 400; font-style: normal; font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Sans'; font-weight: 500; font-style: normal; font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Sans'; font-weight: 600; font-style: normal; font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 400; font-style: normal; font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 500; font-style: normal; font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2'); }
+
+:root {
+  color-scheme: light;
+  --bg: #FAF7F2;
+  --surface: #FFFFFF;
+  --text: #1F1B18;
+  --muted: #62584F;
+  --accent: #7A1420;
+  --accent-hover: #5C0E17;
+  --on-accent: #FAF7F2;          /* button label = background colour (10.09:1) */
+  --border: #E2DAD0;             /* decorative only */
+  --border-control: #8C8177;     /* inputs, toggle, focus (3.56:1) */
+  --code-bg-inline: #F1ECE4;
+  --tag-bg: #F3E4E2;
+  --tag-text: #7A1420;
+  --teal: #1F5560;               /* diagrams and charts only */
+
+  /* Code blocks are dark in both themes (plan 4.3) */
+  --code-bg: #0F0D0C;
+  --code-text: #ECE7E0;
+
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --text-xs: 0.80rem;
+  --text-sm: 0.90rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.563rem;
+  --text-2xl: 1.953rem;
+  --text-3xl: 2.441rem;
+  --text-4xl: 3.052rem;
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px; --space-10: 128px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --container: 1120px;
+  --measure: 68ch;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #151211;
+  --surface: #1E1A18;
+  --text: #ECE7E0;
+  --muted: #A39A90;
+  --accent: #E5747A;
+  --accent-hover: #F09499;
+  --on-accent: #151211;          /* dark text on light red; white would be 2.95:1 */
+  --border: #342D29;
+  --border-control: #7A7067;
+  --code-bg-inline: #0F0D0C;
+  --tag-bg: #2E1B1C;
+  --tag-text: #F09499;
+  --teal: #6FB7C4;
+}

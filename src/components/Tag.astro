@@ -1,0 +1,14 @@
+---
+import { tagUrl } from '../lib/projects';
+interface Props { name: string; link?: boolean }
+const { name, link = true } = Astro.props;
+---
+{link ? <a class="tag" href={tagUrl(name)}>{name}</a> : <span class="tag">{name}</span>}
+<style>
+  .tag {
+    display: inline-block; font-family: var(--font-mono); font-size: var(--text-xs); line-height: 1.4;
+    background: var(--tag-bg); color: var(--tag-text); padding: 4px 8px; border-radius: var(--radius-sm);
+    text-decoration: none; white-space: nowrap;
+  }
+  a.tag:hover { text-decoration: underline; color: var(--tag-text); }
+</style>

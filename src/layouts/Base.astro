@@ -1,0 +1,143 @@
+---
+import '../styles/base.css';
+import { profile } from '../data/profile';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  jsonLd?: object;
+}
+const { title, description = profile.description, ogImage = '/og/default.png', jsonLd } = Astro.props;
+const fullTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${profile.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogUrl = new URL(ogImage, Astro.site);
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/projects/', label: 'Projects' },
+  { href: '/skills/', label: 'Skills' },
+  { href: '/about/', label: 'About' },
+  { href: '/resume/', label: 'Resume' },
+  { href: '/#contact', label: 'Contact' },
+];
+const year = new Date().getFullYear();
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/source-serif-4-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <meta name="theme-color" content="#FAF7F2" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#151211" media="(prefers-color-scheme: dark)" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogUrl} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+  <!-- Theme before first paint: stored choice, else system preference. No flash. -->
+  <script is:inline>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container bar">
+      <a class="brand" href="/">{profile.name}</a>
+      <nav aria-label="Main">
+        <ul>
+          {nav.map((n) => (
+            <li><a href={n.href} aria-current={path.startsWith(n.href) && n.href !== '/#contact' ? 'page' : undefined}>{n.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch colour theme" title="Switch colour theme">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2a7 7 0 0 1 0 14z" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <slot />
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <div class="container foot">
+      <div>
+        <p class="foot-name">{profile.name}</p>
+        <p class="muted">{profile.role} · {profile.location}</p>
+      </div>
+      <ul class="foot-links">
+        <li>
+          <a class="js-email" href="#contact" data-u={profile.emailUser} data-d={profile.emailDomain}>
+            {profile.emailUser} [at] {profile.emailDomain}
+          </a>
+        </li>
+        <li><a href={profile.linkedin} rel="me">LinkedIn</a></li>
+        <li><a href={profile.github} rel="me">GitHub</a></li>
+        <li><a href={profile.resumePdf} download={profile.resumePdfName}>Resume (PDF)</a></li>
+      </ul>
+      <p class="muted small">© {year} {profile.name}. Client work is described with generalised names; no client code or data is published here.</p>
+    </div>
+  </footer>
+
+  <script is:inline>
+    (function () {
+      var b = document.querySelector('.theme-toggle');
+      if (b) b.addEventListener('click', function () {
+        var r = document.documentElement;
+        var t = r.dataset.theme === 'dark' ? 'light' : 'dark';
+        r.dataset.theme = t;
+        try { localStorage.setItem('theme', t); } catch (e) {}
+      });
+      document.querySelectorAll('.js-email').forEach(function (a) {
+        var e = a.dataset.u + '@' + a.dataset.d;
+        a.href = 'mailto:' + e;
+        a.textContent = e;
+      });
+    })();
+  </script>
+</body>
+</html>
+
+<style>
+  .site-header { border-bottom: 1px solid var(--border); }
+  .bar { display: flex; align-items: center; gap: var(--space-5); min-height: 64px; flex-wrap: wrap; }
+  .brand { font-family: var(--font-serif); font-weight: 600; font-size: var(--text-lg); color: var(--text); text-decoration: none; margin-right: auto; }
+  nav ul { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-5); margin: 0; padding: 0; }
+  nav a { color: var(--text); text-decoration: none; font-size: var(--text-sm); font-weight: 500; padding: var(--space-1) 0; border-bottom: 2px solid transparent; }
+  nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  nav a[aria-current='page'] { color: var(--accent); border-bottom-color: var(--accent); }
+  .theme-toggle { background: none; border: 1px solid var(--border-control); color: var(--text); border-radius: var(--radius-sm); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 639px) {
+    .bar { padding-top: var(--space-3); padding-bottom: var(--space-3); gap: var(--space-3); }
+    nav { order: 3; width: 100%; }
+  }
+  main { padding-top: var(--space-8); padding-bottom: var(--space-9); min-height: 60vh; }
+  .site-footer { border-top: 1px solid var(--border); padding: var(--space-7) 0; background: var(--surface); }
+  .foot { display: grid; gap: var(--space-4); }
+  .foot p { margin: 0; }
+  .foot-name { font-family: var(--font-serif); font-weight: 600; font-size: var(--text-lg); }
+  .foot-links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
+  .small { font-size: var(--text-xs); }
+</style>

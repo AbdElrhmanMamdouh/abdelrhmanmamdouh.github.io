@@ -1,0 +1,31 @@
+---
+// Redrawn generic diagram. Contains no client data.
+// Layered architecture, application at the top, hardware at the bottom (plan 4.7).
+interface Props {
+  id: string;
+  title: string;
+  desc: string;
+  layers: { name: string; items: string[]; hl?: boolean }[];
+}
+const { id, title, desc, layers } = Astro.props;
+const W = 640, lw = 120, h = 50, gap = 10;
+---
+<svg class="dg" viewBox={`0 0 ${W} ${layers.length * (h + gap)}`} role="img" aria-labelledby={`${id}-t ${id}-d`}>
+  <title id={`${id}-t`}>{title}</title>
+  <desc id={`${id}-d`}>{desc}</desc>
+  {layers.map((l, i) => {
+    const y = i * (h + gap);
+    const iw = (W - lw - 8) / l.items.length;
+    return (
+      <g>
+        <text x="0" y={y + h / 2 + 4} class={l.hl ? 'mine-t' : ''} font-weight="500">{l.name}</text>
+        {l.items.map((it, j) => (
+          <g>
+            <rect class={l.hl ? 'box mine' : 'box'} x={lw + j * iw} y={y} width={iw - 8} height={h} rx="4" />
+            <text x={lw + j * iw + (iw - 8) / 2} y={y + h / 2 + 4} text-anchor="middle" font-size="11.5">{it}</text>
+          </g>
+        ))}
+      </g>
+    );
+  })}
+</svg>

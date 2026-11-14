@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { allProjects } from '../../lib/projects';
+
+const projects = await allProjects();
+const areas = ['Automotive', 'Embedded Linux', 'Connectivity', 'AI', 'Hardware'];
+---
+<Base title="Projects" description="Embedded software projects: automotive Ethernet, Bluetooth and Android bring-up under hypervisors, AI test generation, embedded vision and hardware.">
+  <h1>Projects</h1>
+  <p class="lead">Client case studies are being cleared with my employer before they are published in full. Until then those cards show only what is already on my resume.</p>
+
+  <div class="filter" role="group" aria-label="Filter projects by area">
+    <a class="chip" href="/projects/" data-tag="">All</a>
+    {areas.map((a) => <a class="chip" href={`/projects/?tag=${encodeURIComponent(a)}`} data-tag={a}>{a}</a>)}
+  </div>
+  <p class="status muted" aria-live="polite" hidden></p>
+
+  <div class="grid" id="project-grid">
+    {projects.map((p) => <ProjectCard project={p} />)}
+  </div>
+
+  <!-- Tag filter: works from ?tag=… links anywhere on the site. Without JS, all cards show. -->
+  <script is:inline>
+    (function () {
+      var tag = new URLSearchParams(location.search).get('tag') || '';
+      var cards = document.querySelectorAll('#project-grid .card');
+      var shown = 0;
+      cards.forEach(function (c) {
+        var tags = JSON.parse(c.dataset.tags || '[]');
+        var ok = !tag || tags.indexOf(tag) !== -1;
+        c.hidden = !ok;
+        if (ok) shown++;
+      });
+      document.querySelectorAll('.chip').forEach(function (ch) {
+        if (ch.dataset.tag === tag) ch.setAttribute('aria-current', 'true');
+      });
+      var s = document.querySelector('.status');
+      if (tag && s) {
+        s.hidden = false;
+        s.textContent = shown + ' project' + (shown === 1 ? '' : 's') + ' tagged "' + tag + '".';
+      }
+    })();
+  </script>
+</Base>
+<style>
+  .lead { max-width: var(--measure); color: var(--muted); }
+  .filter { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-6) 0 var(--space-3); }
+  .chip { font-family: var(--font-mono); font-size: var(--text-xs); text-decoration: none; color: var(--text); border: 1px solid var(--border-control); border-radius: var(--radius-sm); padding: 4px 10px; }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip[aria-current='true'] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .status { font-size: var(--text-sm); }
+  .grid { margin-top: var(--space-5); }
+  [hidden] { display: none !important; }
+</style>

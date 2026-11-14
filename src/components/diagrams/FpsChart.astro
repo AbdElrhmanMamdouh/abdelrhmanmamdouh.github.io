@@ -1,0 +1,29 @@
+---
+// Redrawn generic diagram. Contains no client data.
+// V7.1: frame rate before and after optimisation. The result is a range (17 to 20 FPS),
+// drawn as a solid bar to 17 and an outlined extension to 20. No intermediate steps are drawn,
+// because the record has none.
+const x0 = 150, w = 460, max = 20;
+const sx = (v: number) => x0 + (v / max) * w;
+---
+<svg class="dg" viewBox="0 0 720 190" role="img" aria-labelledby="fps-t fps-d">
+  <title id="fps-t">Frame rate before and after optimisation</title>
+  <desc id="fps-d">First pipeline: under 1 frame per second. Optimised pipeline: 17 to 20 frames per second.</desc>
+  <text x="0" y="56">First pipeline</text>
+  <rect class="bar" x={x0} y="40" width={sx(0.8) - x0} height="26" />
+  <text x={sx(0.8) + 10} y="58">under 1 FPS</text>
+
+  <text x="0" y="118">Optimised</text>
+  <rect class="bar-hl" x={x0} y="102" width={sx(17) - x0} height="26" />
+  <rect x={sx(17)} y="102" width={sx(20) - sx(17)} height="26" fill="var(--tag-bg)" stroke="var(--accent)" stroke-width="1.5" />
+  <text x={sx(20) + 10} y="120" class="mine-t">17–20 FPS</text>
+
+  <line class="base" x1={x0} y1="150" x2={x0 + w} y2="150" />
+  {[0, 5, 10, 15, 20].map((v) => (
+    <g>
+      <line class="base" x1={sx(v)} y1="150" x2={sx(v)} y2="155" />
+      <text class="muted-t" x={sx(v)} y="172" text-anchor="middle">{v}</text>
+    </g>
+  ))}
+  <text class="muted-t" x={x0 + w} y="188" text-anchor="end">frames per second</text>
+</svg>

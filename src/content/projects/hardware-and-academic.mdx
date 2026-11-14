@@ -1,0 +1,89 @@
+---
+title: "Hardware and academic projects"
+hook: "Where the firmware habits came from: bare-metal drivers, PCBs made in-house, and analog front ends."
+context: "Student and personal projects"
+period: "2022 to 2024"
+role: "Firmware author; hardware engineer on a student robotics team"
+team: "solo and student teams"
+order: 9
+featured: false
+confidentiality: "open"
+approval: "not-needed"
+areas: ["Hardware"]
+tags: ["C", "AVR / ATmega32", "Bare-metal drivers", "Layered architecture", "PCB design", "Altium", "Eagle", "MATLAB", "Analog front end", "Sensors"]
+skills:
+  - { name: "C", level: "evaluated" }
+  - { name: "RTOS / MCU firmware", level: "evaluated" }
+  - { name: "Hardware / PCB", level: "evaluated" }
+metrics:
+  - { value: "4", label: "projects on one page" }
+  - { value: "3", label: "ROV competitions" }
+draft: false
+---
+import Figure from '../../components/Figure.astro';
+import Layered from '../../components/diagrams/Layered.astro';
+import Chain from '../../components/diagrams/Chain.astro';
+
+These projects came before my automotive work. They are short on purpose: they show where my habits come from, writing drivers from the register up, designing the board the firmware runs on, and caring about the signal before the software sees it.
+
+## Smart home on ATmega32 (2023)
+
+A home-control system on an AVR ATmega32, written in C with a strict layered architecture: microcontroller drivers at the bottom, hardware-abstraction drivers in the middle, and the application on top. I wrote the drivers for digital I/O, interrupts, the ADC and timers, and on top of them for the 7-segment display, keypad, LCD and motors. Access is protected by keypad-based authentication.
+
+<Figure caption="Each layer only talks to the layer below it, so the application never touches a register. The same idea as AUTOSAR's MCAL, on an 8-bit microcontroller.">
+  <Layered id="smart-home" title="Smart-home firmware layers" desc="Application on top; hardware-abstraction drivers for keypad, LCD, 7-segment display and motors in the middle; microcontroller drivers for DIO, ADC, timers and interrupts at the bottom." layers={[
+    { name: 'Application', items: ['Smart-home logic', 'Keypad authentication'], hl: true },
+    { name: 'HAL', items: ['Keypad', 'LCD', '7-segment', 'Motors'] },
+    { name: 'MCAL', items: ['DIO', 'ADC', 'Timers', 'Interrupts'] },
+    { name: 'Hardware', items: ['ATmega32'] },
+  ]} />
+</Figure>
+
+`C` `AVR` `bare-metal drivers` `layered architecture`
+
+## ROV switching system and in-house PCBs (2022 to 2024)
+
+Hardware engineer on ROBO-TECH, a student underwater-robotics team. I designed and fabricated single- and double-layer PCBs in-house, with solder mask, and built modular circuits on edge connectors so boards could be swapped. For the ROV *Levi* I designed the switching system that fires the flash, laser and solenoid in sync. The team competed in MATE ROV 2023, UMVC 2023 and ARC.
+
+<Figure caption="One control signal drives a switching board that fires three loads in sync. Modular circuits on edge connectors let boards be swapped." wide>
+  <Chain id="rov" title="ROV switching system" desc="A control signal goes to the switching board, which drives the flash, the laser and the solenoid together." blocks={[
+    { t: 'Control signal', s: 'from the ROV' },
+    { t: 'Switching board', s: 'in-house PCB', hl: true },
+  ]} fanout={['Flash', 'Laser', 'Solenoid']} fanoutTitle="synchronised loads" />
+</Figure>
+
+`PCB design` `Altium` `Eagle` `circuit design`
+
+## Embedded speech-recognition module (2022)
+
+A number-recognition module with its own analog front end: a microphone and speaker stage built with op-amps, then spectrum analysis with the FFT and recognition in MATLAB, at about 90% accuracy.
+
+<Figure caption="The analog stage decides how clean the signal is before any software runs; the FFT turns it into features that can be recognised." wide>
+  <Chain id="speech" title="Speech-recognition signal chain" desc="Microphone, op-amp front end, sampling, FFT spectrum analysis, number recognition." blocks={[
+    { t: 'Microphone' },
+    { t: 'Op-amp stage', s: 'analog front end', hl: true },
+    { t: 'Sampling' },
+    { t: 'FFT', s: 'spectrum analysis' },
+    { t: 'Recognition', s: 'MATLAB, ~90%' },
+  ]} />
+</Figure>
+
+`analog front end` `MATLAB` `DSP`
+
+## Line-following industrial robot (2024)
+
+A robot that follows a line and avoids obstacles, using IR and ultrasonic sensors and zone-based navigation, and logs its data to an SD card.
+
+<Figure caption="Sensors feed a zone-based decision step that drives the motors; sensor data is logged to an SD card." wide>
+  <Chain id="robot" title="Line-following robot control loop" desc="IR and ultrasonic sensors feed zone-based navigation, which drives the motors and logs data to an SD card." blocks={[
+    { t: 'IR sensors', s: 'line position' },
+    { t: 'Ultrasonic', s: 'obstacles' },
+    { t: 'Zone-based', s: 'navigation', hl: true },
+  ]} fanout={['Motors', 'SD-card log']} />
+</Figure>
+
+`sensors` `control` `embedded C`
+
+## What these taught me
+
+Writing every driver myself on an 8-bit part is why I read datasheets before code, and why layering came naturally later on AUTOSAR. Making boards in-house taught me to design for testing and repair. The speech module taught me that a clean signal saves more effort than clever software.

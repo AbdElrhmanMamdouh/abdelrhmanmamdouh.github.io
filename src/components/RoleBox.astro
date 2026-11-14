@@ -1,0 +1,14 @@
+---
+interface Props { owned: string; team: string; tools: string }
+const { owned, team, tools } = Astro.props;
+---
+<aside class="role" aria-label="My role">
+  <p><strong>Owned:</strong> {owned}</p>
+  <p><strong>Team did:</strong> {team}</p>
+  <p><strong>Tools:</strong> {tools}</p>
+</aside>
+<style>
+  .role { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius-sm); padding: var(--space-4) var(--space-5); margin: var(--space-6) 0; max-width: var(--measure); }
+  .role p { margin: 0 0 var(--space-2); font-size: var(--text-sm); }
+  .role p:last-child { margin: 0; }
+</style>

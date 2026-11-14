@@ -1,0 +1,49 @@
+---
+import Base from './Base.astro';
+import Tag from '../components/Tag.astro';
+import MetricChip from '../components/MetricChip.astro';
+import { profile } from '../data/profile';
+import type { Project } from '../lib/projects';
+interface Props { project: Project }
+const { project } = Astro.props;
+const d = project.data;
+const confNote: Record<string, string> = {
+  client: 'Client work. Names, identifiers and figures are generalised. Diagrams are redrawn.',
+  internal: 'Internal tool. Names and figures are generalised. Diagrams are redrawn.',
+  academic: 'Team project. Diagrams are my own redrawings, not figures from the paper.',
+  open: 'Personal and student projects.',
+};
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.hook,
+  author: { '@type': 'Person', name: profile.name, url: Astro.site?.toString() },
+  url: new URL(Astro.url.pathname, Astro.site).toString(),
+};
+---
+<Base title={d.title} description={d.hook} jsonLd={jsonLd}>
+  <article class="cs">
+    <p class="eyebrow"><a href="/projects/">Projects</a> / {d.context} · {d.period}</p>
+    <h1>{d.title}</h1>
+    <p class="lead">{d.hook}</p>
+    <p class="note">{confNote[d.confidentiality]}</p>
+    {d.metrics.length > 0 && (
+      <div class="strip">{d.metrics.map((m) => <MetricChip value={m.value} label={m.label} size="lg" />)}</div>
+    )}
+    <div class="prose content"><slot /></div>
+    <section class="techs" aria-labelledby="tech-h">
+      <h2 id="tech-h">Technologies</h2>
+      <div class="tags">{d.tags.map((t) => <Tag name={t} />)}</div>
+    </section>
+    <p class="back"><a href="/projects/">← All projects</a></p>
+  </article>
+</Base>
+<style>
+  .lead { font-size: var(--text-lg); max-width: var(--measure); line-height: 1.5; }
+  .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-5); padding: var(--space-5) 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: var(--space-6); max-width: 1000px; }
+  .content :global(figure) { max-width: 1000px; }
+  .content :global(.wide) { width: min(1000px, calc(100vw - 48px)); max-width: none; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .back { margin-top: var(--space-7); }
+</style>

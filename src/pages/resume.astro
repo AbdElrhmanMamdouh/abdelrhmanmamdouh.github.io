@@ -1,0 +1,116 @@
+---
+import Base from '../layouts/Base.astro';
+import { profile } from '../data/profile';
+
+// Web edition of the resume. Follows the confidentiality mapping, with two further web-only rules:
+// exact part numbers are generalised (plan 9.2) and nothing about decompiling or
+// reverse engineering third-party software is shown (plan P2, P3). The PDF stays the master.
+const experience = [
+  {
+    title: 'Central ADAS ECU · German premium OEM',
+    period: '08/2024 – present',
+    bullets: [
+      'Developed AUTOSAR Classic switch Complex Device Driver features in C on a multi-core automotive microcontroller for a dual-die automotive Ethernet switch: a data-path-reset DTC, a UDS crash-dump routine, and a DLT redesign cutting log bandwidth by about 60% with no data loss.',
+      'Owned switch configuration as sole engineer across 13 specification releases, 2 dies and 5 variants (TCAM, VLAN, QoS, AVB, port mirroring); built a PyQt6 switch simulator modelling an 11-stage frame pipeline (about 16.6k lines).',
+      'Maintained the MACsec part of the driver; root-caused lost error history (the switch clears entries on read) and a missing DTC caused by a queue delay.',
+      'Implemented 10 DEM freeze frames and a security DTC derived from JTAG-lock and secure-boot states, configuring AUTOSAR ports, runnables, events and task mapping.',
+      'Designed a Vector CANoe stress-test framework (about 10k lines): a simulated switch node in CAPL, Python code generators, and a C++ OpenSSL library for AES key wrap and AES-CMAC; wrote 46 tests that found real driver defects, and the team reused it for 90 tests.',
+      'Developed the CUnit unit-test framework on Bazel and designed MC/DC test cases for ASPICE SWE.4.',
+      'Integrated OEM AUTOSAR platform and HSM releases; root-caused an HSM memory-window shift blocking ECU coding, an NvM write failure and log drops from MTU overflow.',
+      'Supported ISO 26262 ASIL B work: automated PIL / SIL results, closed MCAL assumption-of-use gaps, and fixed MISRA C (QAC) and CodeSonar findings.',
+    ],
+  },
+  {
+    title: 'High-performance cockpit platform · Tier-1 supplier',
+    period: '02/2026 – present',
+    bullets: [
+      'Ported an Android infotainment product to Android 15 / AAOS as a guest on Xen and QNX hypervisors on a new automotive SoC (AOSP device targets, Soong / Kleaf).',
+      'Owned the Bluetooth bring-up of a UART-attached Wi-Fi / Bluetooth combo radio: UART passthrough between Xen domains, device-tree nodes and a mainline driver backport into the Android Linux kernel; validated on hardware.',
+      'Root-caused a silent Bluetooth UART on the QNX guest to missing SoC support in the Linux GPIO driver, and added it.',
+      'Contributed to A-sample board bring-up: device-tree fixes, GPIO hogs, USB 2.0 controller and passthrough, boot-chain flashing (ATF, U-Boot, Xen), and the EVS camera HAL adapted to a new frame size.',
+      'Created the Yocto build for the cluster Linux: a custom layer adding Qt 6 and cluster apps, a build-orchestration script and board image targets.',
+      'Root-caused third-party app crashes (JNI reference-table overflow, heap exhaustion) from logcat and tombstones.',
+    ],
+  },
+  {
+    title: 'Bluetooth / Wi-Fi over Ethernet · premium motorcycle OEM',
+    period: '10/2026 – 11/2026',
+    bullets: [
+      'Architected a two-ECU design for wireless phone projection with the radio on an AUTOSAR Classic ECU: 6 SOME/IP services covering all 95 proxy operations, a policy manager, and an IPsec-protected GRETAP Wi-Fi path; closed 27 review resolutions.',
+      'Built and hardware-tested the ESP32 proof of concept: about 10.5k lines of C firmware (ESP-IDF, FreeRTOS, Bluedroid Classic + BLE, OTA), a BlueZ-compatible D-Bus facade, and a simulation model verified by 56 scenarios, 928 Python tests and 607 C unit checks.',
+    ],
+  },
+  {
+    title: 'R&D and AI engineering · eJad',
+    period: '02/2025 – present',
+    bullets: [
+      'Initiated a multi-agent LLM approach for ASPICE SWE.4 unit-test generation, cutting test development time by 60% and VectorCAST generation effort by 30%.',
+      'Rewrote the tool as sole author (about 19k lines of Python): an agentic LangGraph pipeline with self-correcting build / test / coverage loops, task-based routing across Gemini, DeepSeek and local Ollama models, and a PySide6 GUI.',
+      'Added SWE.5 integration-test generation, extended the team’s VectorCAST RAG generator (LangChain, FAISS) with new LLM providers and an offline mode, and built GitHub Copilot agents and skills that turn test specifications into CUnit suites.',
+      'Evaluated SDV platforms: an ADAS showcase on Eclipse S-CORE (Bazel, zero-copy IPC), Eclipse OpenBSW cross-compiled, flashed and debugged on NXP S32K148 (GCC, Rust), and the navigation stack of a team Qt 6 / QML cluster demo.',
+    ],
+  },
+];
+---
+<Base title="Resume" description="Resume of AbdElrahman Khalil, embedded software engineer: AUTOSAR Classic, embedded Linux and Android under hypervisors, AI-assisted test engineering.">
+  <div class="top">
+    <div>
+      <h1>Resume</h1>
+      <p class="muted">{profile.role} · {profile.location}</p>
+    </div>
+    <a class="btn btn-primary" href={profile.resumePdf} download={profile.resumePdfName}>Download PDF</a>
+  </div>
+
+  <div class="prose">
+    <h2>Summary</h2>
+    <p>Embedded software engineer with 2+ years on automotive OEM and Tier-1 projects. Embedded C on AUTOSAR Classic: Ethernet switch driver, UDS diagnostics, MACsec and unit testing under ASPICE and ISO 26262. Embedded Linux and Android (AAOS) bring-up under Xen and QNX: kernel drivers, device trees, Yocto, Bluetooth. Builds multi-agent LLM tools that cut unit-test development time by 60%.</p>
+
+    <h2>Experience</h2>
+    <p class="role-line"><strong>Embedded Software Engineer, {profile.employer}</strong> <span class="mono muted">07/2024 – present</span></p>
+    {experience.map((e) => (
+      <section class="job">
+        <h3>{e.title} <span class="mono muted period">{e.period}</span></h3>
+        <ul>{e.bullets.map((b) => <li>{b}</li>)}</ul>
+      </section>
+    ))}
+
+    <h2>Project</h2>
+    <section class="job">
+      <h3>Driver monitoring system on TI TDA4VM · graduation project funded by eJad <span class="mono muted period">2024</span></h3>
+      <ul>
+        <li>Real-time camera-based driver monitoring on BeagleBone AI-64 (TI TDA4VM) classifying driver state from eye closure, gaze, yawn and head pose at about 90% accuracy.</li>
+        <li>IMX219 IR sensor over MIPI CSI-2 / V4L2 on embedded Linux (device-tree overlays); a GStreamer + TIOVX (OpenVX) pipeline offloading pre-processing to the ISP and C66x DSPs, from under 1 FPS to 17–20 FPS.</li>
+        <li>An x86 software-in-the-loop environment simulating the TDA4VM cores, imager and DSPs for CI and dataset-based testing.</li>
+        <li>Co-author: <a href={profile.paper.url}>{profile.paper.title}</a>, IEEE MIUCC 2024.</li>
+      </ul>
+      <p><a href="/projects/driver-monitoring-tda4vm/">Case study →</a></p>
+    </section>
+
+    <h2>Skills</h2>
+    <ul class="skills">
+      <li><strong>Languages:</strong> C, C++, Python, Bash, CAPL, QML, Rust (working), MATLAB.</li>
+      <li><strong>Embedded Linux and Android:</strong> Linux kernel drivers, device trees and overlays, Yocto, BSP and board bring-up, boot chain (ATF, U-Boot), UART, GPIO, USB, BlueZ, D-Bus, GStreamer, V4L2, Xen, QNX Hypervisor, AOSP / AAOS (Android 15), Android HAL.</li>
+      <li><strong>Automotive and embedded:</strong> AUTOSAR Classic / OSEK, Complex Device Drivers, RTE, MCAL, DEM / DCM, UDS, NvM, DLT, SOME/IP, HSM / secure boot, FreeRTOS, ISO 26262 (ASIL B), ASPICE, MISRA C.</li>
+      <li><strong>MCUs and SoCs:</strong> Infineon Aurix TC3xx, NXP S32K148, ESP32, ATmega32, Renesas R-Car, TI TDA4VM.</li>
+      <li><strong>Networking:</strong> Automotive Ethernet (TCAM, VLAN, QoS, AVB), MACsec, TCP/IP, IPsec, Bluetooth Classic / BLE, Wi-Fi, Wireshark.</li>
+      <li><strong>Testing:</strong> CUnit, pytest, MC/DC, LCOV / gcov, VectorCAST, Vector CANoe, PIL / SIL, QAC, CodeSonar.</li>
+      <li><strong>AI / LLM:</strong> LangGraph, LangChain, RAG (FAISS), prompt and context engineering, reflection loops, multi-provider model routing, Gemini / Vertex AI, DeepSeek, Ollama, GitHub Copilot agents and skills.</li>
+      <li><strong>Tools:</strong> Git, Gerrit, Bazel, CMake, Docker, Jira, Qt 6 / PySide6, Altium, Eagle, OrCAD.</li>
+    </ul>
+
+    <h2>Education</h2>
+    <p><strong>B.Sc. in Communication and Electronics Engineering</strong>, Alexandria University, 2019 – 2024. Courses: Embedded Systems (ITI, 162 hours), Visual Embedded Android (AOSP), AI course (Tech Pathways MENA).</p>
+
+    <h2>Leadership</h2>
+    <p>Chairman, IEEE Alexandria Student Branch (2023–2024) · Hardware Engineer, ROBO-TECH (2022–2024) · PR Head, Success Training Programs (2021–2023) · Mentor, eJad graduation-project team (2026). <a href="/about/">Details →</a></p>
+  </div>
+</Base>
+<style>
+  .top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-4); border-bottom: 1px solid var(--border); padding-bottom: var(--space-5); margin-bottom: var(--space-5); }
+  .top h1 { margin-bottom: var(--space-1); }
+  .top p { margin: 0; }
+  .job h3 { font-size: var(--text-base); margin-top: var(--space-5); }
+  .period { font-weight: 400; font-size: var(--text-sm); white-space: nowrap; }
+  .role-line { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
+  .skills { list-style: none; padding: 0; }
+</style>

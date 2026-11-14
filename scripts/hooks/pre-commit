@@ -1,0 +1,5 @@
+#!/bin/sh
+# Install once:  cp scripts/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# (On Windows Git Bash this works as-is.)
+npm run --silent build >/dev/null || { echo "Build failed (schema or approval gate)."; exit 1; }
+node scripts/check-banned-terms.mjs || exit 1

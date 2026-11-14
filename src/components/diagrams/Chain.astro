@@ -1,0 +1,50 @@
+---
+// Redrawn generic diagram. Contains no client data.
+// A left-to-right chain of blocks, with optional fan-out at the end.
+// Used for the small diagrams on the hardware collection page.
+interface Props {
+  id: string;
+  title: string;
+  desc: string;
+  blocks: { t: string; s?: string; hl?: boolean }[];
+  fanout?: string[];
+  fanoutTitle?: string;
+}
+const { id, title, desc, blocks, fanout = [], fanoutTitle } = Astro.props;
+const bw = 128, gap = 28, h = 56;
+const fanH = Math.max(fanout.length * 44, h + 24);
+const H = Math.max(h + 40, fanH + 16);
+const yMid = H / 2;
+const chainW = blocks.length * (bw + gap) - gap;
+const W = chainW + (fanout.length ? gap + 40 + bw : 0) + 2;
+const fx = chainW + gap + 40;
+---
+<svg class="dg" viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby={`${id}-t ${id}-d`}>
+  <title id={`${id}-t`}>{title}</title>
+  <desc id={`${id}-d`}>{desc}</desc>
+  <defs>
+    <marker id={`${id}-a`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead" d="M0,0 L10,5 L0,10 z" /></marker>
+  </defs>
+  {blocks.map((b, i) => {
+    const x = 1 + i * (bw + gap);
+    return (
+      <g>
+        <rect class={b.hl ? 'box mine' : 'box'} x={x} y={yMid - h / 2} width={bw} height={h} rx="4" />
+        <text x={x + bw / 2} y={b.s ? yMid - 3 : yMid + 4} text-anchor="middle" class={b.hl ? 'mine-t' : ''}>{b.t}</text>
+        {b.s && <text x={x + bw / 2} y={yMid + 15} text-anchor="middle" class="muted-t" font-size="11">{b.s}</text>}
+        {i < blocks.length - 1 && <line class="line" x1={x + bw} y1={yMid} x2={x + bw + gap - 2} y2={yMid} marker-end={`url(#${id}-a)`} />}
+      </g>
+    );
+  })}
+  {fanout.map((f, i) => {
+    const fy = yMid - (fanout.length * 44) / 2 + i * 44 + 4;
+    return (
+      <g>
+        <line class="line" x1={chainW + 1} y1={yMid} x2={fx - 4} y2={fy + 18} marker-end={`url(#${id}-a)`} />
+        <rect class="box" x={fx} y={fy} width={bw} height="36" rx="4" />
+        <text x={fx + bw / 2} y={fy + 23} text-anchor="middle">{f}</text>
+      </g>
+    );
+  })}
+  {fanoutTitle && <text class="muted-t" x={fx + bw / 2} y="12" text-anchor="middle" font-size="11">{fanoutTitle}</text>}
+</svg>

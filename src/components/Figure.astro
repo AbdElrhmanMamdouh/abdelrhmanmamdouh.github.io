@@ -1,0 +1,14 @@
+---
+// Every diagram gets a caption that states its takeaway (plan 4.7).
+interface Props { caption: string; wide?: boolean }
+const { caption, wide = false } = Astro.props;
+---
+<figure class:list={['fig', { wide }]}>
+  <div class="fig-body"><slot /></div>
+  <figcaption>{caption}</figcaption>
+</figure>
+<style>
+  .fig-body { background: transparent; overflow-x: auto; }
+  .fig { max-width: var(--measure); }
+  .fig.wide { max-width: 1000px; }
+</style>
