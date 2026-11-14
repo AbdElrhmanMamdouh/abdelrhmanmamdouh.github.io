@@ -10,7 +10,7 @@ interface Props {
 const { id, title, desc, layers } = Astro.props;
 const W = 640, lw = 120, h = 50, gap = 10;
 ---
-<svg class="dg" viewBox={`0 0 ${W} ${layers.length * (h + gap)}`} role="img" aria-labelledby={`${id}-t ${id}-d`}>
+<svg class="dg" width={W} viewBox={`0 0 ${W} ${layers.length * (h + gap)}`} role="img" aria-labelledby={`${id}-t ${id}-d`}>
   <title id={`${id}-t`}>{title}</title>
   <desc id={`${id}-d`}>{desc}</desc>
   {layers.map((l, i) => {

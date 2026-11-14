@@ -28,19 +28,20 @@ const projects = defineCollection({
       heroAlt: z.string().optional(),
       repo: z.string().url().or(z.literal('')).default(''),
       paper: z.string().url().or(z.literal('')).default(''),
-      // draft: true  -> card only, marked "case study coming", no page is built.
-      draft: z.boolean().default(true),
+      // page: 'summary'    -> short public-safe page, resume-level wording only (allowed without approval)
+      //       'case-study' -> full case study (client / internal work needs written approval)
+      //       'none'       -> card only
+      page: z.enum(['none', 'summary', 'case-study']).default('summary'),
+      // Short name used in the skills lists.
+      short: z.string().max(24),
     })
     .superRefine((p, ctx) => {
       const needsApproval = p.confidentiality === 'client' || p.confidentiality === 'internal';
-      if (!p.draft && needsApproval && p.approval === 'pending') {
+      if (p.page === 'case-study' && needsApproval && p.approval === 'pending') {
         ctx.addIssue({
           code: 'custom',
-          message: `"${p.title}" is ${p.confidentiality} work and approval is still "pending". Keep draft: true until written approval arrives.`,
+          message: `"${p.title}" is ${p.confidentiality} work and approval is still "pending". Use page: summary until written approval arrives.`,
         });
-      }
-      if (!p.draft && p.metrics.length > 0 && p.metrics.length < 2) {
-        ctx.addIssue({ code: 'custom', message: `"${p.title}": a published card needs 2 to 4 metrics.` });
       }
     }),
 });

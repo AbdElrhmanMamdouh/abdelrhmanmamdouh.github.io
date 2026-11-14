@@ -3,9 +3,11 @@ title: "Driver monitoring on a TI TDA4VM edge device"
 hook: "A real-time driver monitoring system on a BeagleBone AI-64, taken from under 1 FPS to 17 to 20 FPS, and published at an IEEE conference."
 context: "Graduation project · Alexandria University"
 period: "2024"
+short: "Driver monitoring"
+page: "case-study"
 role: "Team member and co-author of the paper"
 team: "graduation project team, funded and mentored by eJad"
-order: 8
+order: 0
 featured: true
 confidentiality: "academic"
 approval: "not-needed"
@@ -19,12 +21,10 @@ skills:
   - { name: "System test frameworks", level: "evaluated" }
   - { name: "Performance optimisation", level: "evaluated" }
 metrics:
-  - { value: "<1 → 17–20", label: "frames per second" }
+  - { value: "17–20 FPS", label: "up from under 1 FPS" }
   - { value: "~90%", label: "driver-state accuracy" }
-  - { value: "IEEE", label: "MIUCC 2024 paper" }
 heroAlt: "Bar chart: the first pipeline ran at under 1 frame per second; the optimised pipeline at 17 to 20."
 paper: "https://doi.org/10.1109/MIUCC62295.2024.10783523"
-draft: false
 ---
 import Figure from '../../components/Figure.astro';
 import RoleBox from '../../components/RoleBox.astro';
@@ -38,8 +38,8 @@ import SilMirror from '../../components/diagrams/SilMirror.astro';
 A driver monitoring system has to tell, from a camera pointed at the driver, whether the driver is focused, distracted, sleepy or drowsy, and it has to do this in real time on a small computer inside the car. Our team built such a system on a BeagleBone AI-64, a board based on the TI TDA4VM vision SoC. The first working pipeline ran at under one frame per second. By moving image work onto the SoC's dedicated hardware and removing work the system did not need, we brought it to 17 to 20 frames per second at about 90% accuracy. The work was published at IEEE MIUCC 2024.
 
 <RoleBox
-  owned="Team member and co-author. My individual contributions are listed here once agreed with the co-authors."
-  team="Built the system together: camera integration, the vision pipeline, the classifier, the optimisation and the test environment."
+  owned="Camera bring-up on embedded Linux, the GStreamer and TIOVX pipeline and its optimisation, and the x86 software-in-the-loop environment. Co-author of the paper."
+  team="Designed the system together, evaluated it, and wrote the paper."
   tools="Embedded Linux, device-tree overlays, V4L2, GStreamer, TIOVX (OpenVX), C, C++, Python."
 />
 
@@ -78,7 +78,7 @@ The system watches the driver through an infrared camera and classifies the driv
 
 **Symptom.** The first working pipeline produced under one frame per second: correct results, far too late to warn a driver.
 
-**How we found it.** We profiled the pipeline stage by stage to see where the time went, instead of guessing.
+**How we found it.** We profiled the pipeline stage by stage to see where the time went.
 
 **Fix.** Three changes on top of the hardware offload: process only one face per frame (the driver), bypass frames the system did not need to analyse, and stop writing frames out during normal operation. Together with moving pre-processing to the ISP and DSPs, this brought the system to 17 to 20 frames per second.
 
@@ -97,6 +97,6 @@ The system watches the driver through an infrared camera and classifies the driv
 
 On a heterogeneous SoC, the first question is not "how do I make this code faster" but "which block should this step run on". The second lesson was to measure before optimising: the largest gains came from removing work the system did not need, which profiling made obvious.
 
-## Try it yourself
+## Code and data
 
-The project code and dataset are not public yet. Publishing them needs the agreement of all co-authors and the project sponsor. Until then, the paper is the reference.
+The code and dataset are not public; they belong to the whole team and the project sponsor. The paper is the reference.

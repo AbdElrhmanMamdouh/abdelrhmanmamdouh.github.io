@@ -2,7 +2,8 @@
 import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import MetricChip from '../components/MetricChip.astro';
-import { profile, headlineMetrics, timeline } from '../data/profile';
+import Experience from '../components/Experience.astro';
+import { profile, headlineMetrics } from '../data/profile';
 import { skillGroups } from '../data/skills';
 import { allProjects } from '../lib/projects';
 
@@ -19,30 +20,29 @@ const jsonLd = {
   url: Astro.site?.toString(),
   sameAs: [profile.linkedin, profile.github],
   alumniOf: 'Alexandria University',
-  subjectOf: {
-    '@type': 'ScholarlyArticle',
-    name: profile.paper.title,
-    sameAs: profile.paper.url,
-  },
+  subjectOf: { '@type': 'ScholarlyArticle', name: profile.paper.title, sameAs: profile.paper.url },
 };
 ---
 <Base jsonLd={jsonLd}>
   <section class="hero" aria-labelledby="hero-h">
-    <h1 id="hero-h"><span class="pos">{profile.positioning}</span> <span class="pos-detail">{profile.positioningDetail}</span></h1>
+    <h1 id="hero-h">{profile.positioning}</h1>
+    <p class="sub">{profile.positioningDetail}</p>
+    <p class="avail mono">{profile.availability}</p>
     <div class="actions">
       <a class="btn btn-primary" href={profile.resumePdf} download={profile.resumePdfName}>Download resume (PDF)</a>
       <a class="btn" href="/projects/">See projects</a>
+      <a class="btn js-email-btn" href="#contact" data-u={profile.emailUser} data-d={profile.emailDomain}>Email me</a>
     </div>
   </section>
 
-  <section class="metrics" aria-label="Headline numbers">
+  <section class="metrics" aria-label="Highlights">
     {headlineMetrics.map((m) => <MetricChip value={m.value} label={m.label} size="lg" />)}
   </section>
 
   <section class="section" aria-labelledby="feat-h">
     <div class="head">
       <h2 id="feat-h">Featured work</h2>
-      <a href="/projects/">All projects →</a>
+      <a href="/projects/">All 10 projects →</a>
     </div>
     <div class="grid">
       {featured.map((p) => <ProjectCard project={p} />)}
@@ -52,13 +52,13 @@ const jsonLd = {
   <section class="section" aria-labelledby="skills-h">
     <div class="head">
       <h2 id="skills-h">Skills</h2>
-      <a href="/skills/">Skills and evidence →</a>
+      <a href="/skills/">Skills with proof →</a>
     </div>
     <ul class="groups">
       {skillGroups.map((g) => (
         <li>
           <a href={`/skills/#${g.id}`}>{g.name}</a>
-          <span class="muted">{g.skills.slice(0, 4).join(' · ')}</span>
+          <span class="muted">{g.skills.join(' · ')}</span>
         </li>
       ))}
     </ul>
@@ -67,16 +67,12 @@ const jsonLd = {
   <section class="section two" aria-labelledby="exp-h">
     <div>
       <h2 id="exp-h">Experience</h2>
-      <ol class="tl">
-        {timeline.slice(0, 4).map((t) => (
-          <li><span class="mono muted">{t.date}</span> <span><strong>{t.title}</strong> · {t.org}</span></li>
-        ))}
-      </ol>
-      <p><a href="/about/">More about me →</a></p>
+      <Experience />
+      <p class="more"><a href="/about/">More about me →</a> · <a href="/resume/">Full resume →</a></p>
     </div>
     <div>
-      <h2>Contact</h2>
-      <p>Open to embedded application and embedded Linux roles. The fastest way to reach me is email or LinkedIn.</p>
+      <h2>Get in touch</h2>
+      <p>I'm open to embedded application and embedded Linux roles. Email or LinkedIn is the fastest way to reach me.</p>
       <p><a class="js-email" href="#contact" data-u={profile.emailUser} data-d={profile.emailDomain}>{profile.emailUser} [at] {profile.emailDomain}</a></p>
       <p><a href={profile.linkedin}>LinkedIn</a> · <a href={profile.github}>GitHub</a></p>
     </div>
@@ -84,23 +80,23 @@ const jsonLd = {
 </Base>
 
 <style>
-  .hero h1 { font-size: var(--text-2xl); line-height: 1.2; max-width: 30ch; margin-bottom: var(--space-6); }
-  @media (min-width: 1024px) { .hero h1 { font-size: var(--text-4xl); line-height: 1.1; max-width: 26ch; } }
-  .pos-detail { color: var(--muted); }
+  .hero h1 { font-size: var(--text-3xl); margin-bottom: var(--space-4); }
+  @media (min-width: 1024px) { .hero h1 { font-size: var(--text-4xl); } }
+  .sub { font-size: var(--text-lg); line-height: 1.5; max-width: 40ch; margin-bottom: var(--space-4); }
+  .avail { font-size: var(--text-sm); color: var(--muted); margin-bottom: var(--space-6); }
   .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
   .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); margin-top: var(--space-8); padding: var(--space-5) 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
   @media (min-width: 1024px) { .metrics { grid-template-columns: repeat(4, 1fr); } }
-  .head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-5); }
+  .head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-bottom: var(--space-5); }
   .head h2 { margin: 0; }
   .groups { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3) var(--space-6); grid-template-columns: 1fr; }
   @media (min-width: 640px) { .groups { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .groups { grid-template-columns: repeat(3, 1fr); } }
   .groups li { display: flex; flex-direction: column; border-top: 1px solid var(--border); padding-top: var(--space-3); }
   .groups a { font-weight: 600; }
   .groups .muted { font-size: var(--text-sm); }
   .two { display: grid; gap: var(--space-7); }
   @media (min-width: 1024px) { .two { grid-template-columns: 3fr 2fr; } }
   .two h2 { margin-top: 0; }
-  .tl { list-style: none; padding: 0; margin: 0 0 var(--space-4); }
-  .tl li { display: grid; grid-template-columns: 9.5rem 1fr; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--border); font-size: var(--text-sm); }
-  @media (max-width: 639px) { .tl li { grid-template-columns: 1fr; gap: 0; } }
+  .more { margin-top: var(--space-4); }
 </style>

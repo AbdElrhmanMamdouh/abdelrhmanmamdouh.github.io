@@ -12,7 +12,7 @@ const stages = [
 ];
 const bw = 150, gap = 22, y = 40, h = 64;
 ---
-<svg class="dg" viewBox={`0 0 ${stages.length * (bw + gap) - gap + 2} 160`} role="img" aria-labelledby="dmsp-t dmsp-d">
+<svg class="dg" width={stages.length * (bw + gap) - gap + 2} viewBox={`0 0 ${stages.length * (bw + gap) - gap + 2} 160`} role="img" aria-labelledby="dmsp-t dmsp-d">
   <title id="dmsp-t">Driver monitoring vision pipeline</title>
   <desc id="dmsp-d">IR camera, capture over MIPI CSI-2, image signal processing on the ISP, pre-processing on the C66x DSPs, inference, and driver-state classification. GStreamer connects the stages.</desc>
   <defs>

@@ -1,31 +1,30 @@
 ---
 import Base from '../layouts/Base.astro';
 import { skillGroups, levelMark, levelLabel, levelRank } from '../data/skills';
-import { allProjects, isPublished, projectUrl, shortNames } from '../lib/projects';
+import { allProjects, isPublished, projectUrl } from '../lib/projects';
 
 const projects = await allProjects();
 
 type Level = 'production' | 'built' | 'evaluated';
-// evidence[skill] = [{ project, level }]
-const evidence = new Map<string, { id: string; title: string; level: Level; url: string | null }[]>();
+const levelWord = { production: 'Production', built: 'Built', evaluated: 'Evaluated' } as const;
+const evidence = new Map<string, { title: string; short: string; level: Level; url: string | null }[]>();
 for (const p of projects) {
   for (const s of p.data.skills) {
     const list = evidence.get(s.name) ?? [];
-    list.push({ id: p.id, title: p.data.title, level: s.level, url: isPublished(p) ? projectUrl(p) : null });
+    list.push({ title: p.data.title, short: p.data.short, level: s.level, url: isPublished(p) ? projectUrl(p) : null });
     evidence.set(s.name, list);
   }
 }
-// Fail the build if a skill in skills.ts has no project behind it (plan 3.1).
+// Fail the build if a listed skill has no project behind it (plan 3.1).
 for (const g of skillGroups) for (const s of g.skills) {
   if (!evidence.has(s)) throw new Error(`Skill "${s}" has no project evidence. Add it to a project's skills or remove it.`);
 }
 const best = (s: string): Level =>
   (evidence.get(s) ?? []).reduce<Level>((b, e) => (levelRank[e.level] > levelRank[b] ? e.level : b), 'evaluated');
-const matrixSkills = skillGroups.flatMap((g) => g.skills);
 ---
-<Base title="Skills" description="Skills grouped by area, each linked to the projects that prove it, with an honest evidence level.">
+<Base title="Skills" description="Skills grouped by area, each linked to the projects that show it, with an honest evidence level.">
   <h1>Skills</h1>
-  <p class="lead">Every skill here links to at least one project that shows it. Instead of percentage bars, each one carries an evidence level.</p>
+  <p class="lead">Each skill links to the projects where I used it. The mark shows how far I took it.</p>
 
   <dl class="legend">
     {(['production', 'built', 'evaluated'] as const).map((l) => (
@@ -33,21 +32,26 @@ const matrixSkills = skillGroups.flatMap((g) => g.skills);
     ))}
   </dl>
 
+  <nav class="jump" aria-label="Skill groups">
+    {skillGroups.map((g) => <a href={`#${g.id}`}>{g.name}</a>)}
+  </nav>
+
   {skillGroups.map((g) => (
     <section id={g.id} class="group" aria-labelledby={`${g.id}-h`}>
       <h2 id={`${g.id}-h`}>{g.name}</h2>
       <ul class="skills">
         {g.skills.map((s) => {
           const ev = (evidence.get(s) ?? []).sort((a, b) => levelRank[b.level] - levelRank[a.level]);
+          const lv = best(s);
           return (
             <li>
-              <span class="skill"><span class="mark" title={levelLabel[best(s)]} aria-label={best(s)}>{levelMark[best(s)]}</span> {s}</span>
+              <span class="skill">
+                <span class="mark" aria-hidden="true" title={levelLabel[lv]}>{levelMark[lv]}</span>
+                {s}
+                <span class="visually-hidden"> ({levelWord[lv]})</span>
+              </span>
               <span class="ev">
-                {ev.map((e) => (
-                  e.url
-                    ? <a href={e.url} title={`${e.title} (${e.level})`}>{shortNames[e.id] ?? e.title}</a>
-                    : <a href="/projects/" class="pending" title={`${e.title} (${e.level}); case study coming`} data-id={e.id}>{shortNames[e.id] ?? e.title}</a>
-                ))}
+                {ev.map((e) => (e.url ? <a href={e.url} title={e.title}>{e.short}</a> : <span>{e.short}</span>))}
               </span>
             </li>
           );
@@ -55,35 +59,6 @@ const matrixSkills = skillGroups.flatMap((g) => g.skills);
       </ul>
     </section>
   ))}
-
-  <section class="section matrix-sec" aria-labelledby="matrix-h">
-    <h2 id="matrix-h">Skills against projects</h2>
-    <p class="muted">Generated from each project's front matter. ● production · ◐ built · ○ evaluated.</p>
-    <div class="matrix-wrap">
-      <table class="matrix">
-        <thead>
-          <tr>
-            <th scope="col">Skill</th>
-            {projects.map((p) => <th scope="col"><abbr title={p.data.title}>{(shortNames[p.id] ?? p.id).split(' ')[0]}</abbr></th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {matrixSkills.map((s) => (
-            <tr>
-              <th scope="row">{s}</th>
-              {projects.map((p) => {
-                const hit = p.data.skills.find((x) => x.name === s);
-                return <td aria-label={hit ? `${p.data.title}: ${hit.level}` : undefined}>{hit ? levelMark[hit.level] : ''}</td>;
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    <ul class="keys muted">
-      {projects.map((p) => <li><span class="mono">{(shortNames[p.id] ?? p.id).split(' ')[0]}</span> {p.data.title}</li>)}
-    </ul>
-  </section>
 </Base>
 <style>
   .lead { max-width: var(--measure); }
@@ -91,18 +66,15 @@ const matrixSkills = skillGroups.flatMap((g) => g.skills);
   .legend div { display: flex; gap: var(--space-3); }
   .legend dt { font-family: var(--font-mono); color: var(--accent); }
   .legend dd { margin: 0; }
+  .jump { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-6) 0 0; }
+  .jump a { font-size: var(--text-sm); text-decoration: none; border: 1px solid var(--border-control); border-radius: var(--radius-sm); padding: 6px 10px; color: var(--text); }
+  .jump a:hover { border-color: var(--accent); color: var(--accent); }
+  .group { scroll-margin-top: var(--space-5); }
   .group h2 { font-size: var(--text-xl); }
   .skills { list-style: none; padding: 0; margin: 0; max-width: 860px; }
-  .skills li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--space-4); padding: var(--space-2) 0; border-bottom: 1px solid var(--border); }
+  .skills li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: var(--space-4); padding: var(--space-3) 0; border-bottom: 1px solid var(--border); }
   @media (max-width: 639px) { .skills li { grid-template-columns: 1fr; gap: var(--space-1); } }
-  .mark { font-family: var(--font-mono); color: var(--accent); display: inline-block; width: 1.2em; }
-  .ev { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font-family: var(--font-mono); font-size: var(--text-xs); align-items: center; }
-  .ev .pending { color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--border-control); }
-  .matrix-wrap { overflow-x: auto; }
-  .matrix { min-width: 760px; }
-  .matrix td { text-align: center; font-family: var(--font-mono); color: var(--accent); }
-  .matrix tbody th { font-family: var(--font-sans); text-transform: none; letter-spacing: 0; font-size: var(--text-sm); color: var(--text); font-weight: 400; border-bottom-color: var(--border); white-space: nowrap; }
-  .matrix abbr { text-decoration: none; }
-  .keys { list-style: none; padding: 0; font-size: var(--text-xs); columns: 2; margin-top: var(--space-4); }
-  @media (max-width: 639px) { .matrix-sec { display: none; } }
+  .mark { font-family: var(--font-mono); color: var(--accent); display: inline-block; width: 1.4em; }
+  .ev { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); font-size: var(--text-sm); align-items: center; }
+  .ev a { padding: 2px 0; }
 </style>

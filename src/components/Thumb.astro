@@ -1,34 +1,11 @@
 ---
 // Card thumbnail = the project's headline diagram (plan 6.2).
-// Client and internal headline diagrams are AMBER and wait for approval,
-// so those cards show a neutral typographic placeholder.
-import FpsChart from './diagrams/FpsChart.astro';
-import Layered from './diagrams/Layered.astro';
-interface Props { id: string; area: string }
-const { id, area } = Astro.props;
+// Client and internal projects show a generic public-technology diagram, not the client's system.
+import CardDiagram from './diagrams/CardDiagram.astro';
+interface Props { id: string }
+const { id } = Astro.props;
 ---
-<div class="thumb" aria-hidden="true">
-  {id === 'driver-monitoring-tda4vm' ? (
-    <FpsChart />
-  ) : id === 'hardware-and-academic' ? (
-    <Layered id={`th-${id}`} title="Layered firmware" desc="" layers={[
-      { name: 'Application', items: ['Smart-home logic'], hl: true },
-      { name: 'HAL', items: ['Keypad', 'LCD', '7-segment', 'Motor'] },
-      { name: 'MCAL', items: ['DIO', 'ADC', 'Timers', 'Interrupts'] },
-    ]} />
-  ) : (
-    <div class="ph">
-      <span class="ph-area">{area}</span>
-      <span class="ph-note">Diagram in preparation</span>
-    </div>
-  )}
-</div>
+<div class="thumb"><CardDiagram id={id} /></div>
 <style>
-  .thumb { aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; padding: var(--space-4); border-bottom: 1px solid var(--border); background: var(--bg); overflow: hidden; }
-  .thumb :global(svg) { width: 100%; height: 100%; }
-  .ph { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between;
-    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 16px 16px; background-position: -1px -1px; padding: var(--space-3); border: 1px dashed var(--border-control); border-radius: var(--radius-sm); }
-  .ph-area { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--accent); background: var(--bg); align-self: flex-start; padding: 0 4px; }
-  .ph-note { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted); background: var(--bg); align-self: flex-end; padding: 0 4px; }
+  .thumb { aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border); background: var(--bg); overflow: hidden; }
 </style>

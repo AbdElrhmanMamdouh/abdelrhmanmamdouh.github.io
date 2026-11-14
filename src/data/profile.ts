@@ -7,9 +7,10 @@ export const profile = {
   altName: 'AbdElrhman Mamdouh',
   role: 'Embedded Software Engineer',
   location: 'Alexandria, Egypt',
-  positioning: 'Embedded software engineer.',
+  positioning: 'Embedded software engineer',
   positioningDetail:
-    'Automotive Ethernet, Bluetooth, Android and Linux bring-up under hypervisors, and AI-assisted test engineering.',
+    'I write embedded C for automotive ECUs, bring up embedded Linux and Android under hypervisors, and build AI tools that write and fix unit tests.',
+  availability: 'Alexandria, Egypt · 2+ years in automotive · open to embedded application and embedded Linux roles',
   description:
     'Embedded software engineer with 2+ years on automotive OEM and Tier-1 projects: AUTOSAR Classic, embedded Linux and Android bring-up under hypervisors, and multi-agent LLM tools for test engineering.',
   // Email is assembled in the browser to cut scraping (plan 5.9). Parts are joined at runtime.
@@ -30,19 +31,35 @@ export const profile = {
   },
 };
 
-// Home-page metric strip. Until employer approval (plan D1), only figures that are
-// already on the distributed resume. "104 work items" waits for approval.
+// Home-page metric strip: outcomes a recruiter can read in a few seconds.
 export const headlineMetrics = [
-  { value: '60%', label: 'less unit-test development time with multi-agent LLM tooling' },
-  { value: '928 + 607', label: 'Python tests and C unit checks on a proof of concept' },
-  { value: '<1 → 17–20', label: 'FPS on an edge vision SoC' },
-  { value: 'IEEE 2024', label: 'co-author, MIUCC conference paper' },
+  { value: '60%', label: 'less unit-test writing time with AI agents I built' },
+  { value: '2', label: 'hypervisors where I brought up Android Bluetooth' },
+  { value: '17–20 FPS', label: 'driver monitoring on an edge chip, up from under 1' },
+  { value: 'IEEE', label: 'co-authored paper, MIUCC 2024' },
 ];
 
-export const timeline = [
-  { date: '02/2026 – now', title: 'High-performance cockpit platform', org: 'Tier-1 supplier, via eJad', line: 'Android 15 guest on Xen and QNX; Bluetooth bring-up; board bring-up.', current: true },
-  { date: '02/2025 – now', title: 'R&D and AI engineering', org: 'eJad', line: 'Multi-agent LLM test generation; open SDV platform evaluations.', current: true },
-  { date: '08/2024 – now', title: 'Central ADAS ECU', org: 'German premium OEM, via eJad', line: 'AUTOSAR Classic switch driver, diagnostics, MACsec, test frameworks.', current: true },
-  { date: '07/2024', title: 'Embedded Software Engineer', org: 'eJad for Engineering Systems', line: 'Joined after the sponsored graduation project.', current: false },
-  { date: '2019 – 2024', title: 'B.Sc. Communication and Electronics Engineering', org: 'Alexandria University', line: 'Graduation project: driver monitoring on TI TDA4VM, published at IEEE MIUCC 2024.', current: false },
+// One job, with the programmes it covers nested under it.
+export const experience = [
+  {
+    date: '07/2024 – present',
+    title: 'Embedded Software Engineer',
+    org: 'eJad for Engineering Systems',
+    current: true,
+    items: [
+      { date: '08/2024 – present', title: 'Central ADAS ECU', org: 'German premium OEM', href: '/projects/adas-ecu-ethernet-switch-driver/' },
+      { date: '02/2025 – present', title: 'R&D and AI engineering', org: 'eJad', href: '/projects/ai-test-generation/' },
+      { date: '02/2026 – present', title: 'High-performance cockpit platform', org: 'Tier-1 supplier', href: '/projects/bluetooth-under-hypervisors/' },
+      { date: '10/2026 – 11/2026', title: 'Bluetooth / Wi-Fi over Ethernet', org: 'premium motorcycle OEM', href: '/projects/bluetooth-wifi-over-ethernet/' },
+    ],
+  },
+  {
+    date: '2019 – 2024',
+    title: 'B.Sc. Communication and Electronics Engineering',
+    org: 'Alexandria University',
+    current: false,
+    items: [
+      { date: '2024', title: 'Graduation project: driver monitoring on TI TDA4VM', org: 'IEEE MIUCC 2024', href: '/projects/driver-monitoring-tda4vm/' },
+    ],
+  },
 ];

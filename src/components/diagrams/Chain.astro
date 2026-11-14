@@ -18,13 +18,15 @@ const yMid = H / 2;
 const chainW = blocks.length * (bw + gap) - gap;
 const W = chainW + (fanout.length ? gap + 40 + bw : 0) + 2;
 const fx = chainW + gap + 40;
+const top = fanoutTitle ? 24 : 0;
 ---
-<svg class="dg" viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby={`${id}-t ${id}-d`}>
+<svg class="dg" width={W} viewBox={`0 0 ${W} ${H + top}`} role="img" aria-labelledby={`${id}-t ${id}-d`}>
   <title id={`${id}-t`}>{title}</title>
   <desc id={`${id}-d`}>{desc}</desc>
   <defs>
     <marker id={`${id}-a`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead" d="M0,0 L10,5 L0,10 z" /></marker>
   </defs>
+  <g transform={`translate(0 ${top})`}>
   {blocks.map((b, i) => {
     const x = 1 + i * (bw + gap);
     return (
@@ -46,5 +48,6 @@ const fx = chainW + gap + 40;
       </g>
     );
   })}
-  {fanoutTitle && <text class="muted-t" x={fx + bw / 2} y="12" text-anchor="middle" font-size="11">{fanoutTitle}</text>}
+  </g>
+  {fanoutTitle && <text class="muted-t" x={fx + bw / 2} y="14" text-anchor="middle" font-size="11">{fanoutTitle}</text>}
 </svg>

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import { profile, timeline } from '../data/profile';
+import Experience from '../components/Experience.astro';
+import { profile } from '../data/profile';
 ---
 <Base title="About" description="About AbdElrahman Khalil: embedded software engineer in Alexandria, Egypt. Background, education, publication and leadership.">
   <div class="prose">
@@ -8,36 +9,25 @@ import { profile, timeline } from '../data/profile';
     <p class="lead">I am an embedded software engineer in Alexandria, Egypt, working on automotive projects for OEMs and Tier-1 suppliers through {profile.employer}.</p>
     <p>My work sits close to the hardware. On microcontrollers I write embedded C on AUTOSAR Classic: an Ethernet switch driver, UDS diagnostics, MACsec, and the unit and system tests around them, under ASPICE and ISO 26262. On application processors I bring up embedded Linux and Android Automotive as guests under Xen and QNX: kernel drivers, device trees, Yocto and Bluetooth.</p>
     <p>Alongside that I build AI tooling for embedded teams. I started a multi-agent LLM approach to unit-test generation at work, and rewrote the tool as a LangGraph pipeline that builds, runs and fixes its own tests.</p>
-    <p>I like problems where the answer is in the timing, the register map or the log, and I like explaining them with a clear diagram.</p>
     <p class="muted small">Name note: my publications and GitHub account use <strong>{profile.altName}</strong>. It is the same person.</p>
   </div>
 
   <section class="section" aria-labelledby="tl-h">
-    <h2 id="tl-h">Timeline</h2>
-    <ol class="timeline">
-      {timeline.map((t) => (
-        <li class:list={{ current: t.current }}>
-          <span class="date mono">{t.date}</span>
-          <div>
-            <p class="t-title"><strong>{t.title}</strong> · <span class="muted">{t.org}</span></p>
-            <p class="t-line">{t.line}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
+    <h2 id="tl-h">Experience</h2>
+    <Experience />
   </section>
 
   <section class="section prose" aria-labelledby="edu-h">
     <h2 id="edu-h">Education</h2>
-    <p><strong>B.Sc. in Communication and Electronics Engineering</strong>, Alexandria University, 2019 to 2024.</p>
+    <p><strong>B.Sc. in Communication and Electronics Engineering</strong>, Alexandria University, 2019 – 2024.</p>
     <p>Courses: Embedded Systems, ITI, 2023 (162 hours); Visual Embedded Android (AOSP), Udemy; AI course, Tech Pathways MENA Program.</p>
   </section>
 
   <section class="section prose" aria-labelledby="pub-h">
     <h2 id="pub-h">Publication</h2>
     <p>
-      <a href={profile.paper.url}><strong>{profile.paper.title}</strong></a>.
-      {profile.paper.authors}. {profile.paper.venue}.
+      <a href={profile.paper.url}><strong>{profile.paper.title}</strong></a>.{' '}
+      {profile.paper.authors}. {profile.paper.venue}.{' '}
       DOI <a href={profile.paper.url} class="mono">{profile.paper.doi}</a>.
     </p>
     <p><a href="/projects/driver-monitoring-tda4vm/">Read the project write-up →</a></p>
@@ -47,28 +37,15 @@ import { profile, timeline } from '../data/profile';
     <h2 id="lead-h">Leadership and activities</h2>
     <ul>
       <li><strong>Mentor, eJad graduation-project team</strong>, 2026: guiding students on AI-automated software development.</li>
-      <li><strong>Chairman, IEEE Alexandria Student Branch</strong>, 11/2023 to 10/2024: led the branch, set long-term plans and built partnerships. Marketing volunteer from 03/2022.</li>
-      <li><strong>Hardware Engineer, ROBO-TECH team</strong>, 08/2022 to 08/2024: designed and fabricated in-house PCBs, including the ROV <em>Levi</em> switching system (MATE ROV, UMVC, ARC). <a href="/projects/hardware-and-academic/">More →</a></li>
-      <li><strong>Public Relations Head, Success Training Programs (STP)</strong>, 03/2021 to 10/2023: led the PR team, negotiated sponsorships, trained speakers, and coached the second-place team in the Hawk Insight competition.</li>
+      <li><strong>Chairman, IEEE Alexandria Student Branch</strong>, 11/2023 – 10/2024: led the branch, set long-term plans and built partnerships. Marketing volunteer from 03/2022.</li>
+      <li><strong>Hardware Engineer, ROBO-TECH team</strong>, 08/2022 – 08/2024: designed and fabricated in-house PCBs, including the ROV <em>Levi</em> switching system (MATE ROV, UMVC, ARC). <a href="/projects/hardware-and-academic/">More →</a></li>
+      <li><strong>Public Relations Head, Success Training Programs (STP)</strong>, 03/2021 – 10/2023: led the PR team, negotiated sponsorships, trained speakers, and coached the second-place team in the Hawk Insight competition.</li>
     </ul>
-    <p class="muted">I also do graphic design, which is why the diagrams on this site look the way they do. <a href="https://www.behance.net/ado7a">Behance</a>.</p>
+    <p class="muted">I also do graphic design: <a href="https://www.behance.net/ado7a">Behance</a>.</p>
     <p>Languages: Arabic (native), English (proficient).</p>
   </section>
 </Base>
 <style>
   .lead { font-size: var(--text-lg); line-height: 1.5; }
   .small { font-size: var(--text-sm); }
-  .timeline { list-style: none; padding: 0; margin: 0; max-width: 820px; position: relative; }
-  .timeline::before { content: ''; position: absolute; left: 10.5rem; top: 6px; bottom: 6px; width: 1px; background: var(--border-control); }
-  .timeline li { display: grid; grid-template-columns: 9.5rem 1fr; gap: 2rem; padding: var(--space-3) 0; position: relative; }
-  .timeline li::before { content: ''; position: absolute; left: calc(10.5rem - 4px); top: calc(var(--space-3) + 8px); width: 9px; height: 9px; background: var(--bg); border: 1px solid var(--text); }
-  .timeline li.current::before { background: var(--accent); border-color: var(--accent); }
-  .date { font-size: var(--text-sm); color: var(--muted); padding-top: 2px; }
-  .t-title, .t-line { margin: 0; }
-  .t-line { font-size: var(--text-sm); }
-  @media (max-width: 639px) {
-    .timeline::before { left: 4px; }
-    .timeline li { grid-template-columns: 1fr; gap: 0; padding-left: var(--space-6); }
-    .timeline li::before { left: 0; }
-  }
 </style>

@@ -18,7 +18,7 @@ const nav = [
   { href: '/skills/', label: 'Skills' },
   { href: '/about/', label: 'About' },
   { href: '/resume/', label: 'Resume' },
-  { href: '/#contact', label: 'Contact' },
+  { href: '#contact', label: 'Contact' },
 ];
 const year = new Date().getFullYear();
 ---
@@ -66,11 +66,11 @@ const year = new Date().getFullYear();
       <nav aria-label="Main">
         <ul>
           {nav.map((n) => (
-            <li><a href={n.href} aria-current={path.startsWith(n.href) && n.href !== '/#contact' ? 'page' : undefined}>{n.label}</a></li>
+            <li><a href={n.href} aria-current={n.href !== '#contact' && path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a></li>
           ))}
         </ul>
       </nav>
-      <button class="theme-toggle" type="button" aria-label="Switch colour theme" title="Switch colour theme">
+      <button class="theme-toggle" type="button" aria-label="Dark theme" aria-pressed="false" title="Switch light / dark theme">
         <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2a7 7 0 0 1 0 14z" fill="currentColor"/></svg>
       </button>
     </div>
@@ -96,23 +96,27 @@ const year = new Date().getFullYear();
         <li><a href={profile.github} rel="me">GitHub</a></li>
         <li><a href={profile.resumePdf} download={profile.resumePdfName}>Resume (PDF)</a></li>
       </ul>
-      <p class="muted small">© {year} {profile.name}. Client work is described with generalised names; no client code or data is published here.</p>
+      <p class="muted small">© {year} {profile.name}. Client work is described in general terms; no client code or data is published here.</p>
     </div>
   </footer>
 
   <script is:inline>
     (function () {
+      var r = document.documentElement;
       var b = document.querySelector('.theme-toggle');
-      if (b) b.addEventListener('click', function () {
-        var r = document.documentElement;
-        var t = r.dataset.theme === 'dark' ? 'light' : 'dark';
-        r.dataset.theme = t;
-        try { localStorage.setItem('theme', t); } catch (e) {}
-      });
-      document.querySelectorAll('.js-email').forEach(function (a) {
+      if (b) {
+        b.setAttribute('aria-pressed', String(r.dataset.theme === 'dark'));
+        b.addEventListener('click', function () {
+          var t = r.dataset.theme === 'dark' ? 'light' : 'dark';
+          r.dataset.theme = t;
+          b.setAttribute('aria-pressed', String(t === 'dark'));
+          try { localStorage.setItem('theme', t); } catch (e) {}
+        });
+      }
+      document.querySelectorAll('.js-email, .js-email-btn').forEach(function (a) {
         var e = a.dataset.u + '@' + a.dataset.d;
         a.href = 'mailto:' + e;
-        a.textContent = e;
+        if (a.classList.contains('js-email')) a.textContent = e;
       });
     })();
   </script>
@@ -124,7 +128,7 @@ const year = new Date().getFullYear();
   .bar { display: flex; align-items: center; gap: var(--space-5); min-height: 64px; flex-wrap: wrap; }
   .brand { font-family: var(--font-serif); font-weight: 600; font-size: var(--text-lg); color: var(--text); text-decoration: none; margin-right: auto; }
   nav ul { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-5); margin: 0; padding: 0; }
-  nav a { color: var(--text); text-decoration: none; font-size: var(--text-sm); font-weight: 500; padding: var(--space-1) 0; border-bottom: 2px solid transparent; }
+  nav a { color: var(--text); text-decoration: none; font-size: var(--text-sm); font-weight: 500; padding: var(--space-2) 0; display: inline-block; border-bottom: 2px solid transparent; }
   nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
   nav a[aria-current='page'] { color: var(--accent); border-bottom-color: var(--accent); }
   .theme-toggle { background: none; border: 1px solid var(--border-control); color: var(--text); border-radius: var(--radius-sm); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }

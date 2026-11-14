@@ -4,7 +4,7 @@
 // A skill with no project behind it is not shown (it can stay on the PDF resume).
 
 export const skillGroups: { id: string; name: string; skills: string[] }[] = [
-  { id: 'languages', name: 'Languages', skills: ['C', 'C++', 'Python', 'Rust'] },
+  { id: 'languages', name: 'Languages', skills: ['C', 'C++', 'Python', 'Rust (basic)'] },
   {
     id: 'automotive',
     name: 'Automotive software',
@@ -35,8 +35,8 @@ export const skillGroups: { id: string; name: string; skills: string[] }[] = [
 
 export const levelMark = { production: '●', built: '◐', evaluated: '○' } as const;
 export const levelLabel = {
-  production: 'Production: delivered in a series-production or client programme',
-  built: 'Built: built and tested by me in a proof of concept, tool or demo',
-  evaluated: 'Evaluated: hands-on evaluation or academic work',
+  production: 'Production: used in a client or series-production project',
+  built: 'Built: I built and tested it in a tool, prototype or demo',
+  evaluated: 'Evaluated: hands-on evaluation or university work',
 } as const;
 export const levelRank = { production: 3, built: 2, evaluated: 1 } as const;
