@@ -6,11 +6,11 @@ export const profile = {
   // The paper and the GitHub account use this form; stated once on /about/ (decision 9.7).
   altName: 'AbdElrhman Mamdouh',
   role: 'Embedded Software Engineer',
-  location: 'Alexandria, Egypt',
+  location: 'Open to work anywhere',
   positioning: 'Embedded software engineer',
   positioningDetail:
     'I write embedded C for automotive ECUs, bring up embedded Linux and Android under hypervisors, and build AI tools that write and fix unit tests.',
-  availability: 'Alexandria, Egypt · 2+ years in automotive · open to embedded application and embedded Linux roles',
+  availability: '2+ years in automotive · open to embedded application and embedded Linux roles, anywhere',
   description:
     'Embedded software engineer with 2+ years on automotive OEM and Tier-1 projects: AUTOSAR Classic, embedded Linux and Android bring-up under hypervisors, and multi-agent LLM tools for test engineering.',
   // Email is assembled in the browser to cut scraping (plan 5.9). Parts are joined at runtime.
@@ -47,10 +47,10 @@ export const experience = [
     org: 'eJad for Engineering Systems',
     current: true,
     items: [
-      { date: '08/2024 – present', title: 'Central ADAS ECU', org: 'German premium OEM', href: '/projects/adas-ecu-ethernet-switch-driver/' },
+      { date: '08/2024 – present', title: 'Central ADAS ECU', org: 'German OEM', href: '/projects/adas-ecu-ethernet-switch-driver/' },
       { date: '02/2025 – present', title: 'R&D and AI engineering', org: 'eJad', href: '/projects/ai-test-generation/' },
       { date: '02/2026 – present', title: 'High-performance cockpit platform', org: 'Tier-1 supplier', href: '/projects/bluetooth-under-hypervisors/' },
-      { date: '10/2026 – 11/2026', title: 'Bluetooth / Wi-Fi over Ethernet', org: 'premium motorcycle OEM', href: '/projects/bluetooth-wifi-over-ethernet/' },
+      { date: '10/2026 – 11/2026', title: 'Bluetooth / Wi-Fi over Ethernet', org: 'motorcycle OEM', href: '/projects/bluetooth-wifi-over-ethernet/' },
     ],
   },
   {

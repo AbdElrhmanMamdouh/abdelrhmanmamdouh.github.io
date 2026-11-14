@@ -2,7 +2,7 @@
 title: "Ethernet switch driver for a central ADAS ECU"
 short: "ADAS switch driver"
 hook: "Configuration and driver features for the Ethernet switch inside a central ADAS ECU, on AUTOSAR Classic, with the tests that found its hidden defects."
-context: "Central ADAS ECU · German premium OEM"
+context: "Central ADAS ECU · German OEM"
 period: "08/2024 – present"
 role: "Developer and integrator on the microcontroller side; owner of the switch configuration"
 team: "OEM and supplier team"

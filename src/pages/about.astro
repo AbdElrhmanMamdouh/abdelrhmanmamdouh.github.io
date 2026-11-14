@@ -3,10 +3,10 @@ import Base from '../layouts/Base.astro';
 import Experience from '../components/Experience.astro';
 import { profile } from '../data/profile';
 ---
-<Base title="About" description="About AbdElrahman Khalil: embedded software engineer in Alexandria, Egypt. Background, education, publication and leadership.">
+<Base title="About" description="About AbdElrahman Khalil: embedded software engineer. Background, education, publication and leadership.">
   <div class="prose">
     <h1>About</h1>
-    <p class="lead">I am an embedded software engineer in Alexandria, Egypt, working on automotive projects for OEMs and Tier-1 suppliers through {profile.employer}.</p>
+    <p class="lead">I am an embedded software engineer working on automotive projects for OEMs and Tier-1 suppliers through {profile.employer}.</p>
     <p>My work sits close to the hardware. On microcontrollers I write embedded C on AUTOSAR Classic: an Ethernet switch driver, UDS diagnostics, MACsec, and the unit and system tests around them, under ASPICE and ISO 26262. On application processors I bring up embedded Linux and Android Automotive as guests under Xen and QNX: kernel drivers, device trees, Yocto and Bluetooth.</p>
     <p>Alongside that I build AI tooling for embedded teams. I started a multi-agent LLM approach to unit-test generation at work, and rewrote the tool as a LangGraph pipeline that builds, runs and fixes its own tests.</p>
     <p class="muted small">Name note: my publications and GitHub account use <strong>{profile.altName}</strong>. It is the same person.</p>

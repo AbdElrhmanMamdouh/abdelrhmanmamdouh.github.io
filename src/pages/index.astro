@@ -16,7 +16,6 @@ const jsonLd = {
   name: profile.name,
   alternateName: profile.altName,
   jobTitle: profile.role,
-  address: { '@type': 'PostalAddress', addressLocality: 'Alexandria', addressCountry: 'EG' },
   url: Astro.site?.toString(),
   sameAs: [profile.linkedin, profile.github],
   alumniOf: 'Alexandria University',

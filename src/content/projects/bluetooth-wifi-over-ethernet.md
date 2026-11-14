@@ -2,7 +2,7 @@
 title: "Bluetooth and Wi-Fi over Ethernet"
 short: "BT/Wi-Fi over Ethernet"
 hook: "How do you run wireless phone projection on a cluster with no radio? A two-ECU architecture, and a proof of concept on an ESP32."
-context: "Connectivity and cluster ECUs · premium motorcycle OEM"
+context: "Connectivity and cluster ECUs · motorcycle OEM"
 period: "10/2026 – 11/2026"
 role: "Architect; sole builder of the proof of concept"
 team: "solo proof of concept, reviewed with the customer team"
